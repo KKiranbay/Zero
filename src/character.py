@@ -11,15 +11,15 @@ class Character:
         self.m_char_screen_x: float = 0
         self.m_char_screen_y: float = 0
 
-    def move_char(self, keys):
+    def move_char(self, keys, dt: float):
         if keys[pygame.K_a]:
-            self.m_char_x -= self.m_char_speed
+            self.m_char_x -= self.m_char_speed * dt
         if keys[pygame.K_d]:
-            self.m_char_x += self.m_char_speed
+            self.m_char_x += self.m_char_speed * dt
         if keys[pygame.K_w]:
-            self.m_char_y  -= self.m_char_speed
+            self.m_char_y  -= self.m_char_speed * dt
         if keys[pygame.K_s]:
-            self.m_char_y  += self.m_char_speed
+            self.m_char_y  += self.m_char_speed * dt
 
     def draw_char(self, screen: pygame.Surface, cam_pos_x: float, cam_pos_y: float):
         self.m_char_screen_x = self.m_char_x - cam_pos_x
