@@ -1,21 +1,20 @@
 import pygame
 
-
 class Camera:
-    def __init__(self):
+    def __init__(self, cam_pos_x: float, cam_pos_y: float):
         self.m_cam_locked = False
-        self.m_cam_pos_x = 0
-        self.m_cam_pos_y = 0
+        self.m_pos_x = cam_pos_x
+        self.m_pos_y = cam_pos_y
 
-    def move_cam(self, char_pos_x: float, char_pos_y: float, char_size: int, screen_width: int, screen_height: int):
+    def check_focus_on_player_move_cam(self, char_pos_x: float, char_pos_y: float):
         mouse_buttons = pygame.mouse.get_pressed()
 
         # Right mouse button
         m_cam_locked = mouse_buttons[2]
 
         if m_cam_locked:
-            self.m_cam_pos_x = char_pos_x - screen_width // 2 + char_size // 2
-            self.m_cam_pos_y = char_pos_y - screen_height // 2 + char_size // 2
+            self.m_pos_x = char_pos_x
+            self.m_pos_y = char_pos_y
         else:
             # If camera is not locked, we can demonstrate moving the camera independently
             # For simplicity, let's make the camera "follow" the character slowly
