@@ -1,7 +1,5 @@
 from enum import Enum
 
-import pygame
-
 import colors
 
 from playground_object import Playground_Object

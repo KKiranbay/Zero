@@ -43,7 +43,7 @@ game.add_playground(playground)
 player = Character(playground.m_game_rect.width // 2, playground.m_game_rect.height // 2, 50, 500)
 game.add_char_object(player)
 
-camera = Camera(player.m_pos_x, player.m_pos_y)
+camera = Camera(player.rect.centerx, player.rect.centery)
 
 target = NPC(NPC_Type.ENEMY, 100, 100, 20)
 game.add_playground_object(target)
@@ -54,15 +54,16 @@ while running:
 	# Time management
 	update_delta_time()
 
+	events = pygame.event.get()
 	# Event handling
-	for event in pygame.event.get():
+	for event in events:
 		if event.type == pygame.QUIT:
 			running = False
 
-	game.update(dt)
+	game.update(dt, events)
 
 	# Logic
-	camera.check_focus_on_player_move_cam(player.m_pos_x, player.m_pos_y)
+	camera.check_focus_on_player_move_cam(player.rect.centerx, player.rect.centery)
 
 	playground.move_relative_to_cam(camera.m_pos_x, camera.m_pos_y)
 
