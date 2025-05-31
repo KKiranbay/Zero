@@ -2,22 +2,25 @@ import pygame
 
 import colors
 
-class Character:
+from playground import Playground
+from playground_object import Playground_Object
+
+class Character(Playground_Object):
 	def __init__(self, char_x: float, char_y: float, char_size: int, char_speed: float):
-		self.m_char_size: int = char_size
+		super().__init__(char_x, char_y, char_size)
 		self.m_char_speed: float = char_speed
+		self.image.fill(colors.DARK_GREEN)
 
-		self.m_pos_x: float = char_x
-		self.m_pos_y: float = char_y
+	def update(self, dt, playground):
+		keys = pygame.key.get_pressed()
 
-		self.m_char_size_half = self.m_char_size // 2
+		self.move_char(keys, dt, playground)
+		pass
 
-		start_char_rect_left_top_x: float = self.m_pos_x - self.m_char_size_half
-		start_char_rect_left_top_y: float = self.m_pos_y - self.m_char_size_half
+	def move_char(self, keys, dt: float, playground: Playground):
+		original_x = self.m_pos_x
+		original_y = self.m_pos_y
 
-		self.m_rect = pygame.Rect(start_char_rect_left_top_x, start_char_rect_left_top_y, self.m_char_size, self.m_char_size)
-
-	def move_char(self, keys, dt: float):
 		if keys[pygame.K_a]:
 			self.m_pos_x -= self.m_char_speed * dt
 		if keys[pygame.K_d]:
@@ -28,14 +31,7 @@ class Character:
 		if keys[pygame.K_s]:
 			self.m_pos_y += self.m_char_speed * dt
 
-		self.m_rect.x = self.m_pos_x - self.m_char_size_half
-		self.m_rect.y = self.m_pos_y - self.m_char_size_half
+		self.rect.x = self.m_pos_x - self.m_half_size
+		self.rect.y = self.m_pos_y - self.m_half_size
 
-	def check_and_clamp_ip(self, playground_rect: pygame.Rect):
-		self.m_rect.clamp_ip(playground_rect)
-
-		self.m_pos_x = self.m_rect.x + self.m_char_size_half
-		self.m_pos_y = self.m_rect.y + self.m_char_size_half
-
-	def draw_char(self, ground: pygame.Surface):
-		pygame.draw.rect(ground, colors.DARK_GREEN, (self.m_rect.x, self.m_rect.y, self.m_char_size, self.m_char_size))
+		self.check_and_clamp_ip_with_playground(playground.m_game_rect)
