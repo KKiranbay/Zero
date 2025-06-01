@@ -17,13 +17,10 @@ class NPC(Playground_Object):
 		self.image.fill(colors.PURPLE)
 		self.m_health: int = 100
 
-	def on_collision(self, game, collided_with: list[pygame.sprite.Sprite]):
+	def on_collision_with_projectile(self, game, collided_with: list[pygame.sprite.Sprite]):
 		print(f"NPC collided with: {collided_with}")
-		for sprite in collided_with:
-			if isinstance(sprite, type(game.m_char.sprite)):
-				print("NPC collided with character!")
-			elif isinstance(sprite, type(game.m_projectiles.sprites()[0])):
-				sprite.kill()
+		for projectile in collided_with:
+				projectile.kill()
 				self.m_health -= 20
 				print(f"NPC hit by projectile! Health: {self.m_health}")
 				if self.m_health <= 0:

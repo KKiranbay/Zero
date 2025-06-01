@@ -34,7 +34,7 @@ class Game:
 	def add_projectile_object(self, projectile_obj: pygame.sprite.Sprite):
 		self.m_projectiles.add(projectile_obj)
 
-	def add_playground_object(self, sprite_obj: pygame.sprite.Sprite):
+	def add_npc_object(self, sprite_obj: pygame.sprite.Sprite):
 		self.m_npcs.add(sprite_obj)
 
 	def draw(self):
@@ -55,9 +55,9 @@ class Game:
 		collisions = pygame.sprite.groupcollide(self.m_projectiles, self.m_npcs, False, False)
 
 		for projectile, npcs_hit in collisions.items():
-			projectile.on_collision(game=self, collided_with=npcs_hit)
+			projectile.on_collision_with_npc(game=self, collided_with=npcs_hit)
 			for npc in npcs_hit:
-				npc.on_collision(game=self, collided_with=[projectile])
+				npc.on_collision_with_projectile(game=self, collided_with=[projectile])
 
 		if self.m_char.sprite:
 			p_o: Playground_Object = self.m_char.sprite

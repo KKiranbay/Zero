@@ -1,3 +1,4 @@
+import random
 import time
 
 import pygame
@@ -47,7 +48,12 @@ camera = Camera(player.rect.centerx, player.rect.centery, window.get_width(), wi
 game.add_camera(camera)
 
 target = NPC(NPC_Type.ENEMY, 100, 100, 20)
-game.add_playground_object(target)
+game.add_npc_object(target)
+
+
+SPAWN_NPC_EVENT = pygame.USEREVENT + 1
+pygame.time.set_timer(SPAWN_NPC_EVENT, 2500)
+spawn = False
 
 # Game loop
 running = True
@@ -59,11 +65,20 @@ while running:
 	for event in events:
 		if event.type == pygame.QUIT:
 			running = False
+		if event.type == SPAWN_NPC_EVENT:
+			spawn = True
 
 	if running == False:
 		break
 
 	game.update(dt, events)
+
+	if spawn:
+		random_x: float = random.uniform(playground.m_game_world_rect.left, playground.m_game_world_rect.right)
+		random_y: float = random.uniform(playground.m_game_world_rect.top, playground.m_game_world_rect.bottom)
+		game.add_npc_object(NPC(NPC_Type.ENEMY, random_x, random_y, 20))
+		spawn = False
+		pygame.time.set_timer(SPAWN_NPC_EVENT, round(random.uniform(1000, 5000)))
 
 	# Clear main window
 	window.fill(colors.BLACK)

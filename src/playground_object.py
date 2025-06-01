@@ -32,3 +32,13 @@ class Playground_Object(pygame.sprite.Sprite):
 
 	def check_and_clamp_ip_with_playground(self, playground_rect: pygame.Rect) :
 		self.rect.clamp_ip(playground_rect)
+
+	def check_collide_with_playground(self, playground_rect: pygame.Rect) -> bool :
+		return self.rect.colliderect(playground_rect)
+
+	def check_fully_left_playground(self, playground_rect: pygame.Rect) -> bool :
+		top_check: bool = playground_rect.top > self.rect.bottom
+		bottom_check: bool = playground_rect.bottom < self.rect.top
+		left_check: bool = playground_rect.left > self.rect.right
+		right_check: bool = playground_rect.right < self.rect.left
+		return top_check or bottom_check or left_check or right_check
