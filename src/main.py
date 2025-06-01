@@ -9,7 +9,7 @@ from game import Game
 from npc import NPC, NPC_Type
 from playground import Playground
 
-import colors
+import resources.colors as colors
 
 # Initialize Pygame
 pygame.init()
@@ -40,10 +40,11 @@ playground = Playground(window, playground_width, playground_height, colors.BEIG
 
 game.add_playground(playground)
 
-player = Character(playground.m_game_rect.width // 2, playground.m_game_rect.height // 2, 50, 500)
+player = Character(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2, 50, 500)
 game.add_char_object(player)
 
-camera = Camera(player.rect.centerx, player.rect.centery)
+camera = Camera(player.rect.centerx, player.rect.centery, window.get_width(), window.get_height())
+game.add_camera(camera)
 
 target = NPC(NPC_Type.ENEMY, 100, 100, 20)
 game.add_playground_object(target)
@@ -55,17 +56,14 @@ while running:
 	update_delta_time()
 
 	events = pygame.event.get()
-	# Event handling
 	for event in events:
 		if event.type == pygame.QUIT:
 			running = False
 
+	if running == False:
+		break
+
 	game.update(dt, events)
-
-	# Logic
-	camera.check_focus_on_player_move_cam(player.rect.centerx, player.rect.centery)
-
-	playground.move_relative_to_cam(camera.m_pos_x, camera.m_pos_y)
 
 	# Clear main window
 	window.fill(colors.BLACK)

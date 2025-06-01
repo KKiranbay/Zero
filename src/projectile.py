@@ -1,6 +1,6 @@
 import pygame
 
-import colors
+import resources.colors as colors
 
 from playground_object import Playground_Object
 
@@ -14,3 +14,6 @@ class Projectile(Playground_Object):
 	def update(self, dt: float, game):
 		displacement = self.m_direction * 1000 * dt
 		self.setDisplacement(displacement)
+
+	def on_collision(self, game, collided_with: list[pygame.sprite.Sprite]):
+		print(f"Projectile collided with: {collided_with}")

@@ -1,6 +1,8 @@
 from enum import Enum
 
-import colors
+import pygame
+
+import resources.colors as colors
 
 from playground_object import Playground_Object
 
@@ -13,3 +15,17 @@ class NPC(Playground_Object):
 		super().__init__(npc_pos_x, npc_pos_y, npc_size)
 		self.m_type: NPC_Type = npc_type
 		self.image.fill(colors.PURPLE)
+		self.m_health: int = 100
+
+	def on_collision(self, game, collided_with: list[pygame.sprite.Sprite]):
+		print(f"NPC collided with: {collided_with}")
+		for sprite in collided_with:
+			if isinstance(sprite, type(game.m_char.sprite)):
+				print("NPC collided with character!")
+			elif isinstance(sprite, type(game.m_projectiles.sprites()[0])):
+				sprite.kill()
+				self.m_health -= 20
+				print(f"NPC hit by projectile! Health: {self.m_health}")
+				if self.m_health <= 0:
+					print("NPC defeated!")
+					self.kill()
