@@ -74,9 +74,10 @@ while running:
 	game.update(dt, events)
 
 	if spawn:
-		random_x: float = random.uniform(playground.m_game_world_rect.left, playground.m_game_world_rect.right)
-		random_y: float = random.uniform(playground.m_game_world_rect.top, playground.m_game_world_rect.bottom)
-		game.add_npc_object(NPC(NPC_Type.ENEMY, random_x, random_y, 20))
+		enemy_size = random.randint(20, 40)
+		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size, playground.m_game_world_rect.right - enemy_size)
+		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size, playground.m_game_world_rect.bottom - enemy_size)
+		game.add_npc_object(NPC(NPC_Type.ENEMY, random_x, random_y, enemy_size))
 		spawn = False
 		pygame.time.set_timer(SPAWN_NPC_EVENT, round(random.uniform(1000, 5000)))
 

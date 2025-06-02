@@ -13,6 +13,12 @@ class Character(Playground_Object):
 		super().__init__(char_x, char_y, char_size)
 		self.m_char_speed: float = char_speed
 		self.image.fill(colors.DARK_GREEN)
+  
+		self.m_left_click: bool = False
+		self.m_last_shoot_time: int = 0
+  
+		rpm = 300
+		self.m_shot_delay_ms = (60 / rpm) * 1000 #  ms
 
 	def update(self, dt: float, game: Game):
 		self.checkShoot(game)
@@ -38,7 +44,14 @@ class Character(Playground_Object):
 	def checkShoot(self, game: Game):
 		for event in game.m_events:
 			if event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-				self.shoot(game)
+				self.m_left_click = True
+			if event.type == pygame.MOUSEBUTTONUP and not pygame.mouse.get_pressed()[0]:
+				self.m_left_click = False
+    
+		current_time_ms = pygame.time.get_ticks()
+		if self.m_left_click and (current_time_ms - self.m_last_shoot_time) >= self.m_shot_delay_ms:
+			self.m_last_shoot_time = current_time_ms
+			self.shoot(game)
 
 	def shoot(self, game: Game):
 		mousePos: tuple[int, int] = pygame.mouse.get_pos()
