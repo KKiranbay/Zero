@@ -1,26 +1,47 @@
+import math
+
 import pygame
 
+import game_events_dictionary
+import spawner
+
+from camera import Camera
+from game_events_dictionary import GameEventsDictionary
 from playground import Playground
 from playground_object import Playground_Object
-from camera import Camera
 
 class Game:
 	def __init__(self):
-		self.m_char: pygame.sprite.GroupSingle = pygame.sprite.GroupSingle()
+		self.m_current_time_ms: int = pygame.time.get_ticks()
+		self.m_duration_ms: int = 0
+
+		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_projectiles: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_npcs: pygame.sprite.Group = pygame.sprite.Group()
 
-		self.m_events: list[pygame.Event]
+		self.m_game_events: GameEventsDictionary
 		self.m_playground: Playground
 
-	def update(self, dt: float, event: list[pygame.Event]):
-		self.m_events = event
-		self.m_char.update(dt, self)
+		self.m_score: int = 0
+
+	def update(self, dt: float, game_events: GameEventsDictionary):
+		self.m_game_events = game_events
+		self.update_current_time_ms()
+
+		self.m_chars.update(dt, self)
+		self.m_npcs.update(dt, self)
 		self.m_projectiles.update(dt, self)
 
 		self.check_collisions()
 
-		self.m_camera.update(self.m_char.sprite.rect.center)
+		self.check_game_events(game_events)
+
+		self.m_camera.update(self.m_chars.sprites()[0].rect.center)
+
+	def update_current_time_ms(self):
+		temp_ms = pygame.time.get_ticks()
+		self.m_duration_ms += temp_ms - self.m_current_time_ms
+		self.m_current_time_ms = temp_ms
 
 	def add_playground(self, playground: Playground):
 		self.m_playground = playground
@@ -29,7 +50,7 @@ class Game:
 		self.m_camera = camera
 
 	def add_char_object(self, char_obj: pygame.sprite.Sprite):
-		self.m_char.add(char_obj)
+		self.m_chars.add(char_obj)
 
 	def add_projectile_object(self, projectile_obj: pygame.sprite.Sprite):
 		self.m_projectiles.add(projectile_obj)
@@ -46,22 +67,59 @@ class Game:
 		for sprite in self.m_projectiles:
 			self.m_playground.m_surface.blit(sprite.image, sprite.rect.topleft)
 
-		if self.m_char.sprite:
-			self.m_playground.m_surface.blit(self.m_char.sprite.image, self.m_char.sprite.rect.topleft)
+		for sprite in self.m_chars:
+			self.m_playground.m_surface.blit(sprite.image, sprite.rect.topleft)
 
 		self.m_playground.draw_playground(self.m_camera.m_screen_offset)
 
 	def check_collisions(self):
-		collisions = pygame.sprite.groupcollide(self.m_projectiles, self.m_npcs, False, False)
-
-		for projectile, npcs_hit in collisions.items():
+		projectile_npc_collisions = pygame.sprite.groupcollide(self.m_projectiles, self.m_npcs, False, False)
+		for projectile, npcs_hit in projectile_npc_collisions.items():
 			projectile.on_collision_with_npc(game=self, collided_with=npcs_hit)
 			for npc in npcs_hit:
 				npc.on_collision_with_projectile(game=self, collided_with=[projectile])
 
-		if self.m_char.sprite:
-			p_o: Playground_Object = self.m_char.sprite
+		char_npc_collisions = pygame.sprite.groupcollide(self.m_chars, self.m_npcs, False, False)
+		for char, npcs_hit in char_npc_collisions.items():
+			char.on_collision_with_npc(game=self, collided_with=npcs_hit)
+			for npc in npcs_hit:
+				npc.on_collision_with_char(game=self, collided_with=[char])
+
+		for sprite in self.m_chars.sprites():
+			p_o: Playground_Object = sprite
+			p_o.check_and_clamp_ip_with_playground(self.m_playground.m_game_world_rect)
+
+		for sprite in self.m_npcs.sprites():
+			p_o: Playground_Object = sprite
 			p_o.check_and_clamp_ip_with_playground(self.m_playground.m_game_world_rect)
 
 	def get_screen_offset(self) -> pygame.math.Vector2:
 		return self.m_camera.m_screen_offset
+
+	def check_game_events(self, game_events: GameEventsDictionary):
+		self.check_spawn_event(game_events.getEvent(game_events_dictionary.SPAWN_NPC_EVENT))
+		self.check_chars_died_event(game_events.getEvent(game_events_dictionary.CHAR_NO_DIED_EVENT))
+
+	def check_spawn_event(self, spawn: bool):
+		if not spawn:
+			return
+
+		npc = spawner.spawnNPC(self.m_playground, self.m_chars, 200, self.get_exponential_spawn_interval())
+		if (npc != None):
+			self.add_npc_object(npc)
+
+	def get_exponential_spawn_interval(self) -> int:
+		BASE_SPAWN_INTERVAL_MS = 3000
+		DECAY_RATE = 0.01
+		MIN_SPAWN_INTERVAL_MS = 200
+		game_duration_seconds = self.m_duration_ms / 1000.0
+		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds) + 200
+		print(f"{game_duration_seconds} : {raw_interval}")
+		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
+
+	def check_chars_died_event(self, chars_died: list[int]):
+		if not chars_died:
+			return
+
+		if isinstance(chars_died[0], int) and chars_died[0] == 1:
+			self.m_game_events.changeEvent(game_events_dictionary.RESTART_EVENT, True)

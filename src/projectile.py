@@ -17,8 +17,7 @@ class Projectile(Playground_Object):
 		self.setDisplacement(displacement)
 
 		if self.check_fully_left_playground(game.m_playground.m_game_world_rect):
-			print("killed")
 			self.kill()
 
 	def on_collision_with_npc(self, game, collided_with: list[pygame.sprite.Sprite]):
-		print(f"Projectile collided with: {collided_with}")
+		pass

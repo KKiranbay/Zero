@@ -20,7 +20,8 @@ class Playground_Object(pygame.sprite.Sprite):
 		pass
 
 	def setCenter(self, center: pygame.math.Vector2):
-		self.rect.center = round(center)
+		self.rect.centerx = round(center.x)
+		self.rect.centery = round(center.y)
 
 	def setPos(self, x: float, y: float):
 		self.m_pos = pygame.math.Vector2(x, y)
@@ -32,13 +33,14 @@ class Playground_Object(pygame.sprite.Sprite):
 
 	def check_and_clamp_ip_with_playground(self, playground_rect: pygame.Rect) :
 		self.rect.clamp_ip(playground_rect)
+		self.m_pos = pygame.math.Vector2(self.rect.center)
 
 	def check_collide_with_playground(self, playground_rect: pygame.Rect) -> bool :
 		return self.rect.colliderect(playground_rect)
 
 	def check_fully_left_playground(self, playground_rect: pygame.Rect) -> bool :
-		top_check: bool = playground_rect.top > self.rect.bottom
-		bottom_check: bool = playground_rect.bottom < self.rect.top
-		left_check: bool = playground_rect.left > self.rect.right
-		right_check: bool = playground_rect.right < self.rect.left
+		top_check: bool = playground_rect.top > self.m_pos.y + self.m_half_size
+		bottom_check: bool = playground_rect.bottom < self.m_pos.y - self.m_half_size
+		left_check: bool = playground_rect.left > self.m_pos.x + self.m_half_size
+		right_check: bool = playground_rect.right < self.m_pos.x - self.m_half_size
 		return top_check or bottom_check or left_check or right_check

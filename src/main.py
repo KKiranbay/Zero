@@ -10,17 +10,24 @@ from game import Game
 from npc import NPC, NPC_Type
 from playground import Playground
 
+import game_events_dictionary
+from game_events_dictionary import GameEventsDictionary
+
 import resources.colors as colors
 
 # Initialize Pygame
 pygame.init()
 
+fps = 0
+fps_display_timer = 0
+FPS_UPDATE_INTERVAL = 0.5
+
 MAX_HZ = 240  # 240 Hz update rate
 clock = pygame.time.Clock()
 
 # Delta Time
-dt: float = 0.0
-prev_time: float = 0.0
+dt: float = 0
+prev_time: float = time.time()
 
 def update_delta_time():
 	global dt, prev_time
@@ -28,12 +35,30 @@ def update_delta_time():
 	dt = now - prev_time
 	prev_time = now
 
+# Mouse
+pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+
 # Screen
 window: pygame.Surface = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Movable Character with Toggleable Camera")
 
+# Font
+try:
+	font = pygame.font.Font(None, 48)
+except pygame.error:
+	print("Default font not found, trying a system font.")
+	font_name = pygame.font.match_font('dejavusans', bold=True) or \
+				pygame.font.match_font('arial', bold=True) or \
+				pygame.font.match_font('sans', bold=True)
+	if font_name:
+		font = pygame.font.Font(font_name, 48)
+	else:
+		print("No suitable font found! Text rendering might fail.")
+		font = None
+
 # Game instances
-game = Game()
+game: Game = Game()
+game_events: GameEventsDictionary = GameEventsDictionary()
 
 playground_width = 500
 playground_height = 500
@@ -51,35 +76,68 @@ target = NPC(NPC_Type.ENEMY, 100, 100, 20)
 game.add_npc_object(target)
 
 
-SPAWN_NPC_EVENT = pygame.USEREVENT + 1
-pygame.time.set_timer(SPAWN_NPC_EVENT, 2500)
+pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, 2500)
 spawn = False
 
-# Game loop
+restart = False
 running = True
+def check_pygame_events(game_events: GameEventsDictionary):
+	global running
+	pygame_events = pygame.event.get()
+
+	for pygame_event in pygame_events:
+		if pygame_event.type == pygame.QUIT:
+			running = False
+		elif game_events.exists(pygame_event.type):
+			game_events.changeEvent(pygame_event.type, True)
+
+def writeHealth(text: str):
+	global window, font
+	if font:
+		text_surface = font.render(text, True, colors.WHITE)
+		text_rect = text_surface.get_rect()
+		padding = 10
+		text_rect.bottomleft = (padding, window.get_height() - padding)
+		window.blit(text_surface, text_rect)
+
+def writeScore(text: str):
+	global window, font
+	if font:
+		text_surface = font.render(text, True, colors.WHITE)
+		text_rect = text_surface.get_rect()
+		padding = 10
+		text_rect.center = (window.get_width() / 2, padding + text_rect.height / 2)
+		window.blit(text_surface, text_rect)
+
+def writeFPS(text: str):
+	global window, font
+	if font:
+		text_surface = font.render(text, True, colors.WHITE)
+		text_rect = text_surface.get_rect()
+		padding = 10
+		text_rect.topleft = (padding, padding)
+		window.blit(text_surface, text_rect)
+
+# Game loop
+game_events.resetEvents()
+
 while running:
 	# Time management
 	update_delta_time()
 
-	events = pygame.event.get()
-	for event in events:
-		if event.type == pygame.QUIT:
-			running = False
-		if event.type == SPAWN_NPC_EVENT:
-			spawn = True
+	check_pygame_events(game_events)
 
 	if running == False:
 		break
 
-	game.update(dt, events)
+	game.update(dt, game_events)
 
-	if spawn:
-		enemy_size = random.randint(20, 40)
-		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size, playground.m_game_world_rect.right - enemy_size)
-		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size, playground.m_game_world_rect.bottom - enemy_size)
-		game.add_npc_object(NPC(NPC_Type.ENEMY, random_x, random_y, enemy_size))
-		spawn = False
-		pygame.time.set_timer(SPAWN_NPC_EVENT, round(random.uniform(1000, 5000)))
+	if game_events.getEvent(game_events_dictionary.RESTART_EVENT):
+		restart = True
+		game_events.resetEvents()
+		break
+
+	game_events.resetEvents()
 
 	# Clear main window
 	window.fill(colors.BLACK)
@@ -87,11 +145,30 @@ while running:
 	# Draw game stuff
 	game.draw()
 
+	# UI
+	health: str = f"HP: {player.m_health}"
+	writeHealth(health)
+
+	score: str = f"Score: {game.m_score}"
+	writeScore(score)
+
+	fps_display_timer += dt
+	if fps_display_timer >= FPS_UPDATE_INTERVAL:
+		fps = 1 / dt
+		fps_display_timer = 0
+
+	fpsStr: str = f"FPS: {int(fps)}"
+	writeFPS(fpsStr)
+
 	# Update the display
 	pygame.display.flip()
 
 	# --- Frame Rate Control ---
 	clock.tick(MAX_HZ)
 
+if restart:
+    print("Restarted!")
+
 # Quit Pygame
 pygame.quit()
+

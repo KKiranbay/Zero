@@ -16,13 +16,36 @@ class NPC(Playground_Object):
 		self.m_type: NPC_Type = npc_type
 		self.image.fill(colors.PURPLE)
 		self.m_health: int = 100
+		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
+
+	def update(self, dt: float, game):
+		closest_target = None
+
+		min_distance = float('inf')
+		for target in game.m_chars:
+			distance = self.m_pos.distance_to(target.m_pos)
+			if distance < min_distance:
+				min_distance = distance
+				closest_target = target
+
+		if closest_target:
+			self.m_direction = closest_target.m_pos - self.m_pos
+			if self.m_direction.length() > self.rect.width / 2:
+				self.m_direction = self.m_direction.normalize() * 100 * dt
+			else:
+				self.m_direction = pygame.math.Vector2(0, 0)
+		else:
+			self.m_direction = pygame.math.Vector2(0, 0)
+
+		self.setDisplacement(self.m_direction)
 
 	def on_collision_with_projectile(self, game, collided_with: list[pygame.sprite.Sprite]):
-		print(f"NPC collided with: {collided_with}")
 		for projectile in collided_with:
 				projectile.kill()
 				self.m_health -= 20
-				print(f"NPC hit by projectile! Health: {self.m_health}")
 				if self.m_health <= 0:
-					print("NPC defeated!")
+					game.m_score += 1
 					self.kill()
+
+	def on_collision_with_char(self, game, collided_with: list[pygame.sprite.Sprite]):
+		pass
