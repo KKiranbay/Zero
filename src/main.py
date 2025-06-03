@@ -17,19 +17,21 @@ import resources.colors as colors
 # Initialize Pygame
 pygame.init()
 
+fpsStr: str = "FPS: 0"
 fps = 0
-fps_display_timer = 0
+fps_start_timer = time.time()
 FPS_UPDATE_INTERVAL = 0.5
 
-MAX_HZ = 240  # 240 Hz update rate
+MAX_HZ = 120  # 240 Hz update rate
 clock = pygame.time.Clock()
 
 # Delta Time
+now: float = 0
 dt: float = 0
 prev_time: float = time.time()
 
 def update_delta_time():
-	global dt, prev_time
+	global now, dt, prev_time
 	now = time.time()
 	dt = now - prev_time
 	prev_time = now
@@ -143,7 +145,7 @@ while running:
 
 	# Draw game stuff
 	game.draw()
-
+ 
 	# UI
 	health: str = f"HP: {player.m_health}"
 	writeHealth(health)
@@ -151,12 +153,12 @@ while running:
 	score: str = f"Score: {game.m_score}"
 	writeScore(score)
 
-	fps_display_timer += dt
-	if fps_display_timer >= FPS_UPDATE_INTERVAL:
-		fps = 1 / dt
-		fps_display_timer = 0
+	fps += 1
+	if now - fps_start_timer >= FPS_UPDATE_INTERVAL:
+		fpsStr: str = f"FPS: {int(fps / (now - fps_start_timer))}"
+		fps = 0
+		fps_start_timer = now
 
-	fpsStr: str = f"FPS: {int(fps)}"
 	writeFPS(fpsStr)
 
 	# Update the display
