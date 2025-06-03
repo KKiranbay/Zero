@@ -1,5 +1,3 @@
-import time
-
 import pygame
 
 # My code
@@ -19,8 +17,8 @@ import resources.colors as colors
 # Initialize Pygame
 pygame.init()
 
-MAX_HZ = 120  # 120 Hz update rate
-clock = pygame.time.Clock()
+MAX_HZ = 240  # 240 Hz update rate
+desired_framerate = 1.0 / MAX_HZ
 
 # Time Handler
 time_handler: Time_Handler = Time_Handler()
@@ -49,9 +47,7 @@ game.add_camera(camera)
 target = NPC(NPC_Type.ENEMY, 100, 100, 20)
 game.add_npc_object(target)
 
-
 pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, 2500)
-spawn = False
 
 restart = False
 running = True
@@ -68,16 +64,16 @@ def check_pygame_events(game_events: GameEventsDictionary):
 
 # Game loop
 game_events.resetEvents()
-time_handler.tick(MAX_HZ)
+time_handler.tick(desired_framerate)
 
 while running:
-	# Time management
-	user_interface.update()
-
 	check_pygame_events(game_events)
 
 	if running == False:
 		break
+
+	user_interface.update()
+	time_handler.tick(desired_framerate)
 
 	game.update(game_events)
 
@@ -90,7 +86,7 @@ while running:
 
 	# Draw game stuff
 	game.draw()
- 
+
 	# UI
 	health: str = f"HP: {player.m_health}"
 	user_interface.writeHealth(health)
@@ -100,9 +96,6 @@ while running:
 
 	# Update the display
 	pygame.display.flip()
-
-	# Cap the frame rate
-	time_handler.tick(MAX_HZ)
 
 if restart:
     print("Restarted!")

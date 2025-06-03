@@ -12,8 +12,8 @@ class Projectile(Playground_Object):
 		self.image.fill(colors.PINK_RED)
 		pass
 
-	def update(self, dt: float, game: Game):
-		displacement = self.m_direction * 1000 * dt
+	def update(self, dt_s: float, game: Game):
+		displacement = self.m_direction * 1000.0 * dt_s
 		self.setDisplacement(displacement)
 
 		if self.check_fully_left_playground(game.m_playground.m_game_world_rect):

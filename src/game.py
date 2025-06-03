@@ -25,7 +25,7 @@ class Game:
 		self.m_score: int = 0
 
 	def update(self, game_events: GameEventsDictionary):
-		dt_s: float = self.m_time_handler.get_delta_time_s() 
+		dt_s: float = self.m_time_handler.get_delta_time_s()
 
 		self.m_game_events = game_events
 

@@ -15,17 +15,17 @@ class Character(Playground_Object):
 		self.image.fill(colors.DARK_GREEN)
 
 		self.m_left_click: bool = False
-		self.m_last_shoot_time: int = 0
+		self.m_last_shoot_time: float = 0
 
-		self.m_health = 30
+		self.m_health: int = 30
 
-		shot_rpm = 300
-		self.m_shot_delay_ms = (60 / shot_rpm) * 1000 #  ms
+		shot_rpm: int = 300
+		self.m_shot_delay_ms: float = (60.0 / shot_rpm) * 1000.0 #  ms
 
 		self.m_in_collision_with_npc: list[pygame.sprite.Sprite] = []
-		self.m_last_npc_collision_time: int = 0
-		damage_rpm = 60
-		self.m_damage_delay_ms = (60 / damage_rpm) * 1000
+		self.m_last_npc_collision_time: float = 0
+		damage_rpm: int = 60
+		self.m_damage_delay_ms: float = (60.0 / damage_rpm) * 1000.0
 
 	def update(self, dt_s: float, game: Game):
 		self.checkShoot(game)
@@ -76,7 +76,7 @@ class Character(Playground_Object):
 
 		self.m_in_collision_with_npc = collided_with
 
-		total_duration = game.m_time_handler.get_total_duration_ms()
+		total_duration: float = game.m_time_handler.get_total_duration_ms()
 		if not already_collided or (already_collided and (total_duration - self.m_last_npc_collision_time) >= self.m_damage_delay_ms):
 			self.m_last_npc_collision_time = total_duration
 			self.damaged(game)

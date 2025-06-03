@@ -11,17 +11,17 @@ class User_Interface:
         pygame.display.set_caption("Movable Character with Toggleable Camera")
 
         self.m_timer_handler: Time_Handler = time_handler
-        
+
         self.m_fps_str: str = "FPS: 0"
-        self.m_fps_start_timer: int = self.m_timer_handler.get_total_duration_ms()
-        self.m_FPS_UPDATE_INTERVAL: float = 500
-        
+        self.m_fps_start_timer: float = self.m_timer_handler.get_total_duration_ms()
+        self.m_FPS_UPDATE_INTERVAL: float = 0.5
+
         self.m_font: pygame.font.Font | None = None
         self.setFont()
 
     def getWindow(self) -> pygame.Surface:
         return self.m_window
-    
+
     def setFont(self):
         try:
             self.m_font = pygame.font.Font(None, 48)
@@ -40,9 +40,9 @@ class User_Interface:
         self.updateFps()
 
         self.m_window.fill(colors.BLACK)
-        
+
         self.writeFPS(self.m_fps_str)
-        
+
     def writeHealth(self, text: str):
         if self.m_font:
             text_surface = self.m_font.render(text, True, colors.WHITE)
@@ -60,12 +60,12 @@ class User_Interface:
             self.m_window.blit(text_surface, text_rect)
 
     def updateFps(self):
-        current_time: int = self.m_timer_handler.get_total_duration_ms()
+        current_time: float = self.m_timer_handler.get_total_duration_ms()
         if current_time - self.m_fps_start_timer >= self.m_FPS_UPDATE_INTERVAL:
-            fps = self.m_timer_handler.get_fps()
-            self.m_fps_str = f"FPS: {int(fps)}"
+            fps: int = self.m_timer_handler.get_fps()
+            self.m_fps_str = f"FPS: {fps}"
             self.m_fps_start_timer = current_time
-        
+
     def writeFPS(self, text: str):
         if self.m_font:
             text_surface = self.m_font.render(text, True, colors.WHITE)
