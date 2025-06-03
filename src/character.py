@@ -1,7 +1,6 @@
 import pygame
 
 import game_events_dictionary
-import helper
 import resources.colors as colors
 
 from game import Game
@@ -38,16 +37,11 @@ class Character(Playground_Object):
 
 		keys = pygame.key.get_pressed()
 
-		direction = pygame.Vector2(0,0)
-		if keys[pygame.K_a]:
-			direction.x -= self.m_char_speed * dt
-		if keys[pygame.K_d]:
-			direction.x += self.m_char_speed * dt
+		direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
+		if direction.length() == 0:
+			return
 
-		if keys[pygame.K_w]:
-			direction.y -= self.m_char_speed * dt
-		if keys[pygame.K_s]:
-			direction.y += self.m_char_speed * dt
+		direction = direction.normalize() * self.m_char_speed * dt
 
 		self.setDisplacement(direction)
 
@@ -66,7 +60,9 @@ class Character(Playground_Object):
 
 		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
 		direction: pygame.math.Vector2 = mouse_pos_relative_to_playground - self.m_pos
-		norm_direction: pygame.math.Vector2 = helper.normalize_vector(direction)
+		if direction.length() == 0:
+			direction = pygame.math.Vector2(1, 0)  # Default direction if no movement
+		norm_direction: pygame.math.Vector2 = direction.normalize()
 
 		projectile: Projectile = Projectile(norm_direction, self.m_pos.x, self.m_pos.y, 10)
 		game.add_projectile_object(projectile)
