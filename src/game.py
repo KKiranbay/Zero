@@ -9,11 +9,11 @@ from camera import Camera
 from game_events_dictionary import GameEventsDictionary
 from playground import Playground
 from playground_object import Playground_Object
+from time_handler import Time_Handler
 
 class Game:
-	def __init__(self):
-		self.m_current_time_ms: int = pygame.time.get_ticks()
-		self.m_duration_ms: int = 0
+	def __init__(self, time_handler: Time_Handler):
+		self.m_time_handler: Time_Handler = time_handler
 
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_projectiles: pygame.sprite.Group = pygame.sprite.Group()
@@ -24,24 +24,20 @@ class Game:
 
 		self.m_score: int = 0
 
-	def update(self, dt: float, game_events: GameEventsDictionary):
-		self.m_game_events = game_events
-		self.update_current_time_ms()
+	def update(self, game_events: GameEventsDictionary):
+		dt_s: float = self.m_time_handler.get_delta_time_s() 
 
-		self.m_chars.update(dt, self)
-		self.m_npcs.update(dt, self)
-		self.m_projectiles.update(dt, self)
+		self.m_game_events = game_events
+
+		self.m_chars.update(dt_s, self)
+		self.m_npcs.update(dt_s, self)
+		self.m_projectiles.update(dt_s, self)
 
 		self.check_collisions()
 
 		self.check_game_events(game_events)
 
 		self.m_camera.update(self.m_chars.sprites()[0].rect.center)
-
-	def update_current_time_ms(self):
-		temp_ms = pygame.time.get_ticks()
-		self.m_duration_ms += temp_ms - self.m_current_time_ms
-		self.m_current_time_ms = temp_ms
 
 	def add_playground(self, playground: Playground):
 		self.m_playground = playground
@@ -112,7 +108,7 @@ class Game:
 		BASE_SPAWN_INTERVAL_MS = 3000
 		DECAY_RATE = 0.01
 		MIN_SPAWN_INTERVAL_MS = 200
-		game_duration_seconds = self.m_duration_ms / 1000.0
+		game_duration_seconds = self.m_time_handler.get_total_duration_ms() / 1000.0
 		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds) + 200
 		print(f"{game_duration_seconds} : {raw_interval}")
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))

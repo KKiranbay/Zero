@@ -27,11 +27,11 @@ class Character(Playground_Object):
 		damage_rpm = 60
 		self.m_damage_delay_ms = (60 / damage_rpm) * 1000
 
-	def update(self, dt: float, game: Game):
+	def update(self, dt_s: float, game: Game):
 		self.checkShoot(game)
-		self.move_char(dt, game)
+		self.move_char(dt_s, game)
 
-	def move_char(self, dt: float, game: Game):
+	def move_char(self, dt_s: float, game: Game):
 		original_x = self.rect.centerx
 		original_y = self.rect.centery
 
@@ -41,7 +41,7 @@ class Character(Playground_Object):
 		if direction.length() == 0:
 			return
 
-		direction = direction.normalize() * self.m_char_speed * dt
+		direction = direction.normalize() * self.m_char_speed * dt_s
 
 		self.setDisplacement(direction)
 
@@ -51,8 +51,9 @@ class Character(Playground_Object):
 		if game.m_game_events.getEvent(pygame.MOUSEBUTTONUP) and not pygame.mouse.get_pressed()[0]:
 			self.m_left_click = False
 
-		if self.m_left_click and (game.m_current_time_ms - self.m_last_shoot_time) >= self.m_shot_delay_ms:
-			self.m_last_shoot_time = game.m_current_time_ms
+		total_duration = game.m_time_handler.get_total_duration_ms()
+		if self.m_left_click and (total_duration - self.m_last_shoot_time) >= self.m_shot_delay_ms:
+			self.m_last_shoot_time = total_duration
 			self.shoot(game)
 
 	def shoot(self, game: Game):
@@ -61,10 +62,9 @@ class Character(Playground_Object):
 		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
 		direction: pygame.math.Vector2 = mouse_pos_relative_to_playground - self.m_pos
 		if direction.length() == 0:
-			direction = pygame.math.Vector2(1, 0)  # Default direction if no movement
-		norm_direction: pygame.math.Vector2 = direction.normalize()
+			direction.update(1, 0)  # Default direction if no movement
 
-		projectile: Projectile = Projectile(norm_direction, self.m_pos.x, self.m_pos.y, 10)
+		projectile: Projectile = Projectile(direction.normalize(), self.m_pos.x, self.m_pos.y, 10)
 		game.add_projectile_object(projectile)
 
 	def on_collision_with_npc(self, game: Game, collided_with: list[pygame.sprite.Sprite]):
@@ -76,8 +76,9 @@ class Character(Playground_Object):
 
 		self.m_in_collision_with_npc = collided_with
 
-		if not already_collided or (already_collided and (game.m_current_time_ms - self.m_last_npc_collision_time) >= self.m_damage_delay_ms):
-			self.m_last_npc_collision_time = game.m_current_time_ms
+		total_duration = game.m_time_handler.get_total_duration_ms()
+		if not already_collided or (already_collided and (total_duration - self.m_last_npc_collision_time) >= self.m_damage_delay_ms):
+			self.m_last_npc_collision_time = total_duration
 			self.damaged(game)
 
 	def damaged(self, game: Game):

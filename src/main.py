@@ -8,6 +8,8 @@ from character import Character
 from game import Game
 from npc import NPC, NPC_Type
 from playground import Playground
+from time_handler import Time_Handler
+from ui import User_Interface
 
 import game_events_dictionary
 from game_events_dictionary import GameEventsDictionary
@@ -17,60 +19,31 @@ import resources.colors as colors
 # Initialize Pygame
 pygame.init()
 
-fpsStr: str = "FPS: 0"
-fps = 0
-fps_start_timer = time.time()
-FPS_UPDATE_INTERVAL = 0.5
-
-MAX_HZ = 120  # 240 Hz update rate
+MAX_HZ = 120  # 120 Hz update rate
 clock = pygame.time.Clock()
 
-# Delta Time
-now: float = 0
-dt: float = 0
-prev_time: float = time.time()
+# Time Handler
+time_handler: Time_Handler = Time_Handler()
 
-def update_delta_time():
-	global now, dt, prev_time
-	now = time.time()
-	dt = now - prev_time
-	prev_time = now
+# UI
+user_interface: User_Interface = User_Interface((800, 600), time_handler)
 
 # Mouse
 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
 
-# Screen
-window: pygame.Surface = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Movable Character with Toggleable Camera")
-
-# Font
-try:
-	font = pygame.font.Font(None, 48)
-except pygame.error:
-	print("Default font not found, trying a system font.")
-	font_name = pygame.font.match_font('dejavusans', bold=True) or \
-				pygame.font.match_font('arial', bold=True) or \
-				pygame.font.match_font('sans', bold=True)
-	if font_name:
-		font = pygame.font.Font(font_name, 48)
-	else:
-		print("No suitable font found! Text rendering might fail.")
-		font = None
-
 # Game instances
-game: Game = Game()
+game: Game = Game(time_handler)
 game_events: GameEventsDictionary = GameEventsDictionary()
 
 playground_width = 500
 playground_height = 500
-playground = Playground(window, playground_width, playground_height, colors.BEIGE)
-
+playground = Playground(user_interface.getWindow(), playground_width, playground_height, colors.BEIGE)
 game.add_playground(playground)
 
 player = Character(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2, 50, 500)
 game.add_char_object(player)
 
-camera = Camera(player.rect.centerx, player.rect.centery, window.get_width(), window.get_height())
+camera = Camera(player.rect.centerx, player.rect.centery, user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
 game.add_camera(camera)
 
 target = NPC(NPC_Type.ENEMY, 100, 100, 20)
@@ -92,46 +65,21 @@ def check_pygame_events(game_events: GameEventsDictionary):
 		elif game_events.exists(pygame_event.type):
 			game_events.changeEvent(pygame_event.type, True)
 
-def writeHealth(text: str):
-	global window, font
-	if font:
-		text_surface = font.render(text, True, colors.WHITE)
-		text_rect = text_surface.get_rect()
-		padding = 10
-		text_rect.bottomleft = (padding, window.get_height() - padding)
-		window.blit(text_surface, text_rect)
-
-def writeScore(text: str):
-	global window, font
-	if font:
-		text_surface = font.render(text, True, colors.WHITE)
-		text_rect = text_surface.get_rect()
-		padding = 10
-		text_rect.center = (window.get_width() / 2, padding + text_rect.height / 2)
-		window.blit(text_surface, text_rect)
-
-def writeFPS(text: str):
-	global window, font
-	if font:
-		text_surface = font.render(text, True, colors.WHITE)
-		text_rect = text_surface.get_rect()
-		padding = 10
-		text_rect.topleft = (padding, padding)
-		window.blit(text_surface, text_rect)
 
 # Game loop
 game_events.resetEvents()
+time_handler.tick(MAX_HZ)
 
 while running:
 	# Time management
-	update_delta_time()
+	user_interface.update()
 
 	check_pygame_events(game_events)
 
 	if running == False:
 		break
 
-	game.update(dt, game_events)
+	game.update(game_events)
 
 	if game_events.getEvent(game_events_dictionary.RESTART_EVENT):
 		restart = True
@@ -140,32 +88,21 @@ while running:
 
 	game_events.resetEvents()
 
-	# Clear main window
-	window.fill(colors.BLACK)
-
 	# Draw game stuff
 	game.draw()
  
 	# UI
 	health: str = f"HP: {player.m_health}"
-	writeHealth(health)
+	user_interface.writeHealth(health)
 
 	score: str = f"Score: {game.m_score}"
-	writeScore(score)
-
-	fps += 1
-	if now - fps_start_timer >= FPS_UPDATE_INTERVAL:
-		fpsStr: str = f"FPS: {int(fps / (now - fps_start_timer))}"
-		fps = 0
-		fps_start_timer = now
-
-	writeFPS(fpsStr)
+	user_interface.writeScore(score)
 
 	# Update the display
 	pygame.display.flip()
 
-	# --- Frame Rate Control ---
-	clock.tick(MAX_HZ)
+	# Cap the frame rate
+	time_handler.tick(MAX_HZ)
 
 if restart:
     print("Restarted!")

@@ -16,11 +16,11 @@ class Camera:
 		self.m_cam_locked = mouse_buttons[2]
 
 		if self.m_cam_locked:
-			self.m_pos = pygame.math.Vector2(char_pos)
+			self.m_pos.update(char_pos)
 
 		self.update_screen_offset()
 
 	def update_screen_offset(self):
 		screen_offset_x: float = self.m_screen_width // 2 - self.m_pos.x
 		screen_offset_y: float= self.m_screen_height // 2 - self.m_pos.y
-		self.m_screen_offset = pygame.math.Vector2(screen_offset_x, screen_offset_y)
+		self.m_screen_offset.update(screen_offset_x, screen_offset_y)

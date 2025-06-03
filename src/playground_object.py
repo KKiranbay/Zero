@@ -12,11 +12,12 @@ class Playground_Object(pygame.sprite.Sprite):
 		self.m_size: float = size
 		self.m_half_size: float = size // 2
 
-		self.m_pos = pygame.math.Vector2()
+		self.m_pos = pygame.math.Vector2(pos_x, pos_y)
 		self.rect: pygame.Rect = self.image.get_rect()
-		self.setPos(pos_x, pos_y)
+		self.rect.centerx = round(pos_x)
+		self.rect.centery = round(pos_y)
 
-	def update(self, dt: float, game):
+	def update(self, dt_s: int, game):
 		pass
 
 	def setCenter(self, center: pygame.math.Vector2):
@@ -24,7 +25,7 @@ class Playground_Object(pygame.sprite.Sprite):
 		self.rect.centery = round(center.y)
 
 	def setPos(self, x: float, y: float):
-		self.m_pos = pygame.math.Vector2(x, y)
+		self.m_pos.update(x, y)
 		self.setCenter(self.m_pos)
 
 	def setDisplacement(self, displacement: pygame.math.Vector2):
@@ -33,7 +34,7 @@ class Playground_Object(pygame.sprite.Sprite):
 
 	def check_and_clamp_ip_with_playground(self, playground_rect: pygame.Rect) :
 		self.rect.clamp_ip(playground_rect)
-		self.m_pos = pygame.math.Vector2(self.rect.center)
+		self.m_pos.update(self.rect.centerx, self.rect.centery)
 
 	def check_collide_with_playground(self, playground_rect: pygame.Rect) -> bool :
 		return self.rect.colliderect(playground_rect)

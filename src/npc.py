@@ -18,12 +18,12 @@ class NPC(Playground_Object):
 		self.m_health: int = 100
 		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(0, 0)
 
-	def update(self, dt: float, game):
-		closest_target = None
+	def update(self, dt_s: int, game):
+		closest_target: Playground_Object | None = None
 
-		min_distance = float('inf')
+		min_distance: float = float('inf')
 		for target in game.m_chars:
-			distance = self.m_pos.distance_to(target.m_pos)
+			distance: float = self.m_pos.distance_to(target.m_pos)
 			if distance < min_distance:
 				min_distance = distance
 				closest_target = target
@@ -31,13 +31,8 @@ class NPC(Playground_Object):
 		if closest_target:
 			self.m_direction = closest_target.m_pos - self.m_pos
 			if self.m_direction.length() > self.rect.width / 2:
-				self.m_direction = self.m_direction.normalize() * 100 * dt
-			else:
-				self.m_direction = pygame.math.Vector2(0, 0)
-		else:
-			self.m_direction = pygame.math.Vector2(0, 0)
-
-		self.setDisplacement(self.m_direction)
+				self.m_direction = self.m_direction.normalize() * 100 * dt_s
+				self.setDisplacement(self.m_direction)
 
 	def on_collision_with_projectile(self, game, collided_with: list[pygame.sprite.Sprite]):
 		for projectile in collided_with:
