@@ -36,23 +36,27 @@ class User_Interface:
                 print("No suitable font found! Text rendering might fail.")
                 self.m_font = None
 
-    def update(self):
+    def update(self, health: int, score: int):
         self.updateFps()
 
         self.m_window.fill(colors.BLACK)
 
         self.writeFPS(self.m_fps_str)
+        self.writeHealth(health)
+        self.writeScore(score)
 
-    def writeHealth(self, text: str):
+    def writeHealth(self, health: int):
         if self.m_font:
+            text: str = f"HP: {health}"
             text_surface = self.m_font.render(text, True, colors.WHITE)
             text_rect = text_surface.get_rect()
             padding = 10
             text_rect.bottomleft = (padding, self.m_window.get_height() - padding)
             self.m_window.blit(text_surface, text_rect)
 
-    def writeScore(self, text: str):
+    def writeScore(self, score: int):
         if self.m_font:
+            text: str = f"Score: {score}"
             text_surface = self.m_font.render(text, True, colors.WHITE)
             text_rect = text_surface.get_rect()
             padding = 10

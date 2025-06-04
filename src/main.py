@@ -72,7 +72,6 @@ while running:
 	if running == False:
 		break
 
-	user_interface.update()
 	time_handler.tick(desired_framerate)
 
 	game.update(game_events)
@@ -85,14 +84,8 @@ while running:
 	game_events.resetEvents()
 
 	# Draw game stuff
+	user_interface.update(player.m_health, game.m_score)
 	game.draw()
-
-	# UI
-	health: str = f"HP: {player.m_health}"
-	user_interface.writeHealth(health)
-
-	score: str = f"Score: {game.m_score}"
-	user_interface.writeScore(score)
 
 	# Update the display
 	pygame.display.flip()
