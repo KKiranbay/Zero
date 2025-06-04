@@ -84,8 +84,8 @@ while running:
 	game_events.resetEvents()
 
 	# Draw game stuff
-	user_interface.update(player.m_health, game.m_score)
 	game.draw()
+	user_interface.update(player.m_health, game.m_score)
 
 	# Update the display
 	pygame.display.flip()
