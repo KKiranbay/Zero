@@ -17,8 +17,10 @@ import resources.colors as colors
 # Initialize Pygame
 pygame.init()
 
-MAX_HZ = 240  # 240 Hz update rate
-desired_framerate = 1.0 / MAX_HZ
+MAX_HZ: int = 240  # 240 Hz update rate
+desired_framerate: float = 0
+if MAX_HZ != 0:
+	desired_framerate = 1.0 / MAX_HZ
 
 # Time Handler
 time_handler: Time_Handler = Time_Handler()
@@ -84,6 +86,7 @@ while running:
 	game_events.resetEvents()
 
 	# Draw game stuff
+	user_interface.resetWindowFill()
 	game.draw()
 	user_interface.update(player.m_health, game.m_score)
 

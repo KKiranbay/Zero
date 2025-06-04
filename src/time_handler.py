@@ -21,11 +21,12 @@ class Time_Handler:
         self.CHECK_FPS_PERIOD_s: float = 0.5
 
     def tick(self, frame_time: float):
-        self.m_current_time_ns = time.perf_counter_ns()
+        if frame_time != 0:
+            self.m_current_time_ns = time.perf_counter_ns()
 
-        time_to_wait_s = frame_time - (self.m_current_time_ns - self.m_frame_start_time_ns) / 1_000_000_000.0
-        if time_to_wait_s > 0:
-            time.sleep(time_to_wait_s)
+            time_to_wait_s = frame_time - (self.m_current_time_ns - self.m_frame_start_time_ns) / 1_000_000_000.0
+            if time_to_wait_s > 0:
+                time.sleep(time_to_wait_s)
 
         self.m_last_time_ns = self.m_frame_start_time_ns
         self.m_frame_start_time_ns = time.perf_counter_ns()

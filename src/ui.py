@@ -22,6 +22,9 @@ class User_Interface:
     def getWindow(self) -> pygame.Surface:
         return self.m_window
 
+    def resetWindowFill(self):
+        self.m_window.fill(colors.BLACK)
+
     def setFont(self):
         try:
             self.m_font = pygame.font.Font(None, 48)
@@ -38,8 +41,6 @@ class User_Interface:
 
     def update(self, health: int, score: int):
         self.updateFps()
-
-        self.m_window.fill(colors.BLACK)
 
         self.writeFPS(self.m_fps_str)
         self.writeHealth(health)
