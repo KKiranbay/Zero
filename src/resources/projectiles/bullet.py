@@ -16,7 +16,7 @@ class Bullet(Playground_Object):
 		displacement = self.m_direction * 1000.0 * dt_s
 		self.setDisplacement(displacement)
 
-		if self.check_fully_left_playground(game.m_playground.m_game_world_rect):
+		if self.check_fully_left_rect(game.m_playground.m_game_world_rect):
 			self.kill()
 
 	def on_collision_with_npc(self, game, collided_with: list[pygame.sprite.Sprite]):

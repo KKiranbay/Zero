@@ -83,11 +83,11 @@ class Game:
 
 		for sprite in self.m_chars.sprites():
 			p_o: Playground_Object = sprite
-			p_o.check_and_clamp_ip_with_playground(self.m_playground.m_game_world_rect)
+			p_o.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
 
 		for sprite in self.m_npcs.sprites():
 			p_o: Playground_Object = sprite
-			p_o.check_and_clamp_ip_with_playground(self.m_playground.m_game_world_rect)
+			p_o.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
 
 	def get_screen_offset(self) -> pygame.math.Vector2:
 		return self.m_camera.m_screen_offset
