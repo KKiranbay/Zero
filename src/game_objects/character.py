@@ -14,6 +14,7 @@ class Character(Playground_Object):
 
 		self.m_health: int = 30
 		self.m_char_speed: float = char_speed
+		self.m_look_direction: pygame.Vector2 = pygame.Vector2(1, 0)
 
 		# Enemy NPC collision
 		self.m_in_collision_with_npc: set[pygame.sprite.Sprite] = set()
@@ -22,19 +23,22 @@ class Character(Playground_Object):
 		self.m_damage_delay_ms: float = (60.0 / damage_rpm) * 1000.0
 
 		# Triangle Draw
-		self.image = pygame.Surface(self.m_size, pygame.SRCALPHA)
+		self.m_hitbox_multiplier: float = 1.5
+		self.m_half_hitbox_multiplier: float = self.m_hitbox_multiplier / 2
+		self.m_hitbox_size = self.m_size * self.m_hitbox_multiplier
+		self.m_half_hitbox_size = self.m_size * self.m_half_hitbox_multiplier
+		self.m_original_image = pygame.Surface(self.m_hitbox_size, pygame.SRCALPHA)
+		self.image = self.m_original_image.copy()
 		self.image.fill((0, 0, 0, 0)) # transparent background
 		self.rect = self.image.get_rect(center=(self.m_pos))
 
 		self.m_points: list[pygame.Vector2] = [
-			pygame.Vector2(self.m_size.x // 2, 0),
-			pygame.Vector2(0, self.m_size.y),
-			pygame.Vector2(self.m_size.x, self.m_size.y)
+			pygame.Vector2(0, -self.m_half_size.y),
+			pygame.Vector2(-self.m_half_size.x, self.m_half_size.y),
+			pygame.Vector2(self.m_half_size.x, self.m_half_size.y)
 		]
 
-		pygame.draw.polygon(self.image, colors.DARK_GREEN, self.m_points)
-
-		self.mask = pygame.mask.from_surface(self.image)
+		self.updateDrawPolygonAndMask()
 
 		# Weapon
 		self.m_current_weapon: int = 1
@@ -52,6 +56,9 @@ class Character(Playground_Object):
 		self.m_deploy_delay_ms: float = (60.0 / shot_rpm) * 1000.0 # ms
 
 	def update(self, dt_s: float, game: Game):
+		self.updateLookDirection(game)
+		self.updateDrawPolygonAndMask()
+
 		keys = pygame.key.get_pressed()
 
 		self.check_shoot(game)
@@ -60,17 +67,46 @@ class Character(Playground_Object):
 
 		self.check_weapon_select(keys, game)
 
+	def updateLookDirection(self, game: Game):
+		mousePos: tuple[int, int] = pygame.mouse.get_pos()
+
+		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
+		self.m_look_direction: pygame.math.Vector2 = mouse_pos_relative_to_playground - self.m_pos
+		if self.m_look_direction.length() == 0:
+			self.m_look_direction.update(1, 0)  # Default direction if no movement
+		else:
+			self.m_look_direction.normalize_ip()
+
+	def updateDrawPolygonAndMask(self):
+		self.image.fill((0, 0, 0, 0))
+
+		reference_vector = pygame.Vector2(0, -1) # up
+		current_angle = reference_vector.angle_to(self.m_look_direction)
+
+		rotated_points = []
+		for point in self.m_points:
+			# Rotate around (0,0) (the center of our conceptual sprite)
+			rotated_point = point.rotate(current_angle)
+			# Translate back to image coordinates (add half_width/height to move origin to top-left)
+			translated_point = (rotated_point.x + self.m_half_hitbox_size.x,
+								rotated_point.y + self.m_half_hitbox_size.y)
+			rotated_points.append(translated_point)
+
+		pygame.draw.polygon(self.image, colors.DARK_GREEN, rotated_points)
+
+		self.mask = pygame.mask.from_surface(self.image)
+
 	def move_char(self, keys, dt_s: float, game: Game):
 		original_x = self.rect.centerx
 		original_y = self.rect.centery
 
-		direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
-		if direction.length() == 0:
+		movement_direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
+		if movement_direction.length() == 0:
 			return
 
-		direction = direction.normalize() * self.m_char_speed * dt_s
+		movement_direction = movement_direction.normalize() * self.m_char_speed * dt_s
 
-		self.setDisplacement(direction)
+		self.setDisplacement(movement_direction)
 
 	def check_shoot(self, game: Game):
 		if game.m_game_events.getEvent(pygame.MOUSEBUTTONDOWN) and pygame.mouse.get_pressed()[0]:
@@ -81,14 +117,9 @@ class Character(Playground_Object):
 		self.current_weapon_triggered(game)
 
 	def shoot_bullet(self, game: Game):
-		mousePos: tuple[int, int] = pygame.mouse.get_pos()
 
-		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
-		direction: pygame.math.Vector2 = mouse_pos_relative_to_playground - self.m_pos
-		if direction.length() == 0:
-			direction.update(1, 0)  # Default direction if no movement
 
-		bullet: Bullet = Bullet(direction.normalize(), self.m_pos, pygame.Vector2(10, 10))
+		bullet: Bullet = Bullet(self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
 		game.add_projectile_object(bullet)
 
 	def deploy_mine(self, game: Game):
@@ -118,9 +149,9 @@ class Character(Playground_Object):
 			print("Dead!")
 
 	def check_weapon_select(self, keys, game: Game):
-		if keys[pygame.K_1]:
+		if keys[pygame.K_q]:
 			self.change_current_weapon(1)
-		if keys[pygame.K_2]:
+		if keys[pygame.K_e]:
 			self.change_current_weapon(2)
 
 	def change_current_weapon(self, weapon_index: int):

@@ -10,6 +10,7 @@ class Bullet(Playground_Object):
 		super().__init__(projectile_pos, projectile_size)
 		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(direction)
 		self.image.fill(colors.PINK_RED)
+		self.m_damage = 20
 		pass
 
 	def update(self, dt_s: float, game: Game):

@@ -5,7 +5,6 @@ import pygame
 import resources.colors as colors
 
 from game_objects.playground_object import Playground_Object
-
 class NPC_Type(Enum):
 	ENEMY = 1
 	FRIENDLY = 2
@@ -34,13 +33,14 @@ class NPC(Playground_Object):
 				self.m_direction = self.m_direction.normalize() * 100.0 * dt_s
 				self.setDisplacement(self.m_direction)
 
-	def on_collision_with_projectile(self, game, collided_with: list[pygame.sprite.Sprite]):
+	def on_collision_with_projectile(self, game, collided_with):
 		for projectile in collided_with:
-				projectile.kill()
-				self.m_health -= 20
+				self.m_health -= projectile.m_damage
 				if self.m_health <= 0:
 					game.m_score += 1
 					self.kill()
+
+				projectile.kill()
 
 	def on_collision_with_char(self, game, char_hit: pygame.sprite.Sprite):
 		pass
