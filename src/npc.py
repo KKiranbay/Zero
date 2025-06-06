@@ -11,7 +11,7 @@ class NPC_Type(Enum):
 	FRIENDLY = 2
 
 class NPC(Playground_Object):
-	def __init__(self, npc_type: NPC_Type, npc_pos_x: float, npc_pos_y: float, npc_size: float):
+	def __init__(self, npc_type: NPC_Type, npc_pos_x: float, npc_pos_y: float, npc_size: pygame.Vector2):
 		super().__init__(npc_pos_x, npc_pos_y, npc_size)
 		self.m_type: NPC_Type = npc_type
 		self.image.fill(colors.PURPLE)

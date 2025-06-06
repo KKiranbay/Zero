@@ -15,12 +15,13 @@ def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int
 	attempts = 0
 
 	while attempts < max_attempts:
-		enemy_size = random.randint(20, 40)
-		enemy_size_half = enemy_size / 2
-		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size_half, playground.m_game_world_rect.right - enemy_size_half)
-		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size_half, playground.m_game_world_rect.bottom - enemy_size_half)
+		size_int = random.randint(20, 40)
+		enemy_size: pygame.Vector2 = pygame.Vector2(size_int)
+		enemy_size_half: pygame.Vector2 = enemy_size / 2
+		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size_half.x, playground.m_game_world_rect.right - enemy_size_half.x)
+		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size_half.y, playground.m_game_world_rect.bottom - enemy_size_half.y)
 
-		temp_npc_rect = pygame.Rect(0, 0, enemy_size, enemy_size)
+		temp_npc_rect = pygame.Rect(0, 0, enemy_size.x, enemy_size.y)
 		temp_npc_rect.center = (random_x, random_y)
 
 		collision_found = False

@@ -6,10 +6,10 @@ import resources.colors as colors
 from game import Game
 from playground import Playground
 from playground_object import Playground_Object
-from projectile import Projectile
+from resources.projectiles.bullet import Bullet
 
 class Character(Playground_Object):
-	def __init__(self, char_x: float, char_y: float, char_size: int, char_speed: float):
+	def __init__(self, char_x: float, char_y: float, char_size: pygame.Vector2, char_speed: float):
 		super().__init__(char_x, char_y, char_size)
 		self.m_char_speed: float = char_speed
 		self.image.fill(colors.DARK_GREEN)
@@ -64,8 +64,8 @@ class Character(Playground_Object):
 		if direction.length() == 0:
 			direction.update(1, 0)  # Default direction if no movement
 
-		projectile: Projectile = Projectile(direction.normalize(), self.m_pos.x, self.m_pos.y, 10)
-		game.add_projectile_object(projectile)
+		bullet: Bullet = Bullet(direction.normalize(), self.m_pos.x, self.m_pos.y, pygame.Vector2(10,10))
+		game.add_projectile_object(bullet)
 
 	def on_collision_with_npc(self, game: Game, collided_with: list[pygame.sprite.Sprite]):
 		already_collided = False

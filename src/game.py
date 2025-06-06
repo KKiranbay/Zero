@@ -110,7 +110,6 @@ class Game:
 		MIN_SPAWN_INTERVAL_MS = 200
 		game_duration_seconds = self.m_time_handler.get_total_duration_ms() / 1000.0
 		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds) + 200
-		print(f"{game_duration_seconds} : {raw_interval}")
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
 
 	def check_chars_died_event(self, chars_died: list[int]):

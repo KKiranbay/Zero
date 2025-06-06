@@ -17,7 +17,7 @@ import resources.colors as colors
 # Initialize Pygame
 pygame.init()
 
-MAX_HZ: int = 240  # 240 Hz update rate
+MAX_HZ: int = 0  # 240 Hz update rate
 desired_framerate: float = 0
 if MAX_HZ != 0:
 	desired_framerate = 1.0 / MAX_HZ
@@ -40,13 +40,13 @@ playground_height = 500
 playground = Playground(user_interface.getWindow(), playground_width, playground_height, colors.BEIGE)
 game.add_playground(playground)
 
-player = Character(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2, 50, 500)
+player = Character(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2, pygame.Vector2(50,50), 500)
 game.add_char_object(player)
 
 camera = Camera(player.rect.centerx, player.rect.centery, user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
 game.add_camera(camera)
 
-target = NPC(NPC_Type.ENEMY, 100, 100, 20)
+target = NPC(NPC_Type.ENEMY, 100, 100, pygame.Vector2(20,20))
 game.add_npc_object(target)
 
 pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, 2500)
