@@ -3,7 +3,7 @@ import pygame
 import resources.colors as colors
 
 class Playground_Object(pygame.sprite.Sprite):
-	def __init__(self, pos_x: float, pos_y: float, size: pygame.Vector2) -> None:
+	def __init__(self, pos: pygame.Vector2, size: pygame.Vector2) -> None:
 		super().__init__()
 
 		self.image: pygame.Surface = pygame.Surface((size.x, size.y))
@@ -12,10 +12,10 @@ class Playground_Object(pygame.sprite.Sprite):
 		self.m_size: pygame.Vector2 = size
 		self.m_half_size: pygame.Vector2 = size / 2
 
-		self.m_pos = pygame.math.Vector2(pos_x, pos_y)
+		self.m_pos = pos
 		self.rect: pygame.Rect = self.image.get_rect()
-		self.rect.centerx = round(pos_x)
-		self.rect.centery = round(pos_y)
+		self.rect.centerx = round(pos.x)
+		self.rect.centery = round(pos.y)
 
 	def update(self, dt_s: float, game):
 		pass

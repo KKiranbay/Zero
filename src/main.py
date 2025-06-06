@@ -2,9 +2,7 @@ import pygame
 
 # My code
 from camera import Camera
-from character import Character
 from game import Game
-from npc import NPC, NPC_Type
 from playground import Playground
 from time_handler import Time_Handler
 from ui import User_Interface
@@ -12,12 +10,16 @@ from ui import User_Interface
 import game_events_dictionary
 from game_events_dictionary import GameEventsDictionary
 
+from game_objects.character import Character
+from game_objects.npc import NPC, NPC_Type
+
 import resources.colors as colors
+
 
 # Initialize Pygame
 pygame.init()
 
-MAX_HZ: int = 0  # 240 Hz update rate
+MAX_HZ: int = 240  # 240 Hz update rate
 desired_framerate: float = 0
 if MAX_HZ != 0:
 	desired_framerate = 1.0 / MAX_HZ
@@ -40,13 +42,13 @@ playground_height = 500
 playground = Playground(user_interface.getWindow(), playground_width, playground_height, colors.BEIGE)
 game.add_playground(playground)
 
-player = Character(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2, pygame.Vector2(50,50), 500)
+player = Character(pygame.Vector2(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2), pygame.Vector2(50,50), 500)
 game.add_char_object(player)
 
 camera = Camera(player.rect.centerx, player.rect.centery, user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
 game.add_camera(camera)
 
-target = NPC(NPC_Type.ENEMY, 100, 100, pygame.Vector2(20,20))
+target = NPC(NPC_Type.ENEMY, pygame.Vector2(100, 100), pygame.Vector2(20,20))
 game.add_npc_object(target)
 
 pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, 2500)

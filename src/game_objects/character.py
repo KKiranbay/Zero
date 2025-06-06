@@ -4,15 +4,13 @@ import game_events_dictionary
 import resources.colors as colors
 
 from game import Game
-from playground import Playground
-from playground_object import Playground_Object
-from resources.projectiles.bullet import Bullet
+from game_objects.playground_object import Playground_Object
+from game_objects.projectiles.bullet import Bullet
 
 class Character(Playground_Object):
-	def __init__(self, char_x: float, char_y: float, char_size: pygame.Vector2, char_speed: float):
-		super().__init__(char_x, char_y, char_size)
+	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
+		super().__init__(char_pos, char_size)
 		self.m_char_speed: float = char_speed
-		self.image.fill(colors.DARK_GREEN)
 
 		self.m_left_click: bool = False
 		self.m_last_shoot_time: float = 0
@@ -22,10 +20,25 @@ class Character(Playground_Object):
 		shot_rpm: int = 300
 		self.m_shot_delay_ms: float = (60.0 / shot_rpm) * 1000.0 #  ms
 
-		self.m_in_collision_with_npc: list[pygame.sprite.Sprite] = []
+		self.m_in_collision_with_npc: set[pygame.sprite.Sprite] = set()
 		self.m_last_npc_collision_time: float = 0
 		damage_rpm: int = 60
 		self.m_damage_delay_ms: float = (60.0 / damage_rpm) * 1000.0
+
+		# Triangle
+		self.image = pygame.Surface(self.m_size, pygame.SRCALPHA)
+		self.image.fill((0, 0, 0, 0)) # transparent background
+		self.rect = self.image.get_rect(center=(self.m_pos))
+
+		self.m_points: list[pygame.Vector2] = [
+			pygame.Vector2(self.m_size.x // 2, 0),
+			pygame.Vector2(0, self.m_size.y),
+			pygame.Vector2(self.m_size.x, self.m_size.y)
+		]
+
+		pygame.draw.polygon(self.image, colors.DARK_GREEN, self.m_points)
+
+		self.mask = pygame.mask.from_surface(self.image)
 
 	def update(self, dt_s: float, game: Game):
 		self.checkShoot(game)
@@ -64,17 +77,16 @@ class Character(Playground_Object):
 		if direction.length() == 0:
 			direction.update(1, 0)  # Default direction if no movement
 
-		bullet: Bullet = Bullet(direction.normalize(), self.m_pos.x, self.m_pos.y, pygame.Vector2(10,10))
+		bullet: Bullet = Bullet(direction.normalize(), self.m_pos, pygame.Vector2(10,10))
 		game.add_projectile_object(bullet)
 
-	def on_collision_with_npc(self, game: Game, collided_with: list[pygame.sprite.Sprite]):
+	def on_collision_with_npcs(self, game: Game, npcs_hit: set[pygame.sprite.Sprite]):
 		already_collided = False
-		for npc in collided_with:
+		for npc in npcs_hit:
 			if npc in self.m_in_collision_with_npc:
 				already_collided = True
-				break
 
-		self.m_in_collision_with_npc = collided_with
+		self.m_in_collision_with_npc = npcs_hit
 
 		total_duration: float = game.m_time_handler.get_total_duration_ms()
 		if not already_collided or (already_collided and (total_duration - self.m_last_npc_collision_time) >= self.m_damage_delay_ms):

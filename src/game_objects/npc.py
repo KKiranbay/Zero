@@ -4,15 +4,15 @@ import pygame
 
 import resources.colors as colors
 
-from playground_object import Playground_Object
+from game_objects.playground_object import Playground_Object
 
 class NPC_Type(Enum):
 	ENEMY = 1
 	FRIENDLY = 2
 
 class NPC(Playground_Object):
-	def __init__(self, npc_type: NPC_Type, npc_pos_x: float, npc_pos_y: float, npc_size: pygame.Vector2):
-		super().__init__(npc_pos_x, npc_pos_y, npc_size)
+	def __init__(self, npc_type: NPC_Type, npc_pos: pygame.Vector2, npc_size: pygame.Vector2):
+		super().__init__(npc_pos, npc_size)
 		self.m_type: NPC_Type = npc_type
 		self.image.fill(colors.PURPLE)
 		self.m_health: int = 100
@@ -42,5 +42,5 @@ class NPC(Playground_Object):
 					game.m_score += 1
 					self.kill()
 
-	def on_collision_with_char(self, game, collided_with: list[pygame.sprite.Sprite]):
+	def on_collision_with_char(self, game, char_hit: pygame.sprite.Sprite):
 		pass
