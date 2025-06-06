@@ -1,9 +1,9 @@
 import pygame
 
 class Camera:
-	def __init__(self, cam_pos_x: float, cam_pos_y: float,  screen_width: int, screen_height: int):
+	def __init__(self, cam_pos: pygame.math.Vector2,  screen_width: int, screen_height: int):
 		self.m_cam_locked = False
-		self.m_pos: pygame.math.Vector2 = pygame.math.Vector2(cam_pos_x, cam_pos_y)
+		self.m_pos: pygame.math.Vector2 = pygame.math.Vector2(cam_pos)
 		self.m_screen_width = screen_width
 		self.m_screen_height = screen_height
 

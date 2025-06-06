@@ -16,7 +16,7 @@ def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int
 
 	while attempts < max_attempts:
 		size_int = random.randint(20, 40)
-		enemy_size: pygame.Vector2 = pygame.Vector2(size_int)
+		enemy_size: pygame.Vector2 = pygame.Vector2(size_int, size_int)
 		enemy_size_half: pygame.Vector2 = enemy_size / 2
 		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size_half.x, playground.m_game_world_rect.right - enemy_size_half.x)
 		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size_half.y, playground.m_game_world_rect.bottom - enemy_size_half.y)

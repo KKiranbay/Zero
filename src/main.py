@@ -45,7 +45,7 @@ game.add_playground(playground)
 player = Character(pygame.Vector2(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2), pygame.Vector2(50,50), 500)
 game.add_char_object(player)
 
-camera = Camera(player.rect.centerx, player.rect.centery, user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
+camera = Camera(pygame.Vector2(player.rect.center), user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
 game.add_camera(camera)
 
 target = NPC(NPC_Type.ENEMY, pygame.Vector2(100, 100), pygame.Vector2(20,20))

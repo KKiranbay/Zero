@@ -77,9 +77,6 @@ class Game:
 
 		char_npc_collisions = pygame.sprite.groupcollide(self.m_chars, self.m_npcs, False, False)
 		for char, npcs_hit in char_npc_collisions.items():
-			# char.on_collision_with_npc(game=self, collided_with=npcs_hit)
-			# for npc in npcs_hit:
-			# 	npc.on_collision_with_char(game=self, collided_with=[char])
 			npcs_hit_forreal: set[pygame.sprite.Sprite] = set()
 			for npc in npcs_hit:
 				if pygame.sprite.collide_mask(char, npc):

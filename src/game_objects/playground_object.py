@@ -9,10 +9,10 @@ class Playground_Object(pygame.sprite.Sprite):
 		self.image: pygame.Surface = pygame.Surface((size.x, size.y))
 		self.image.fill(colors.WHITE)
 
-		self.m_size: pygame.Vector2 = size
-		self.m_half_size: pygame.Vector2 = size / 2
+		self.m_size: pygame.Vector2 = pygame.Vector2(size)
+		self.m_half_size: pygame.Vector2 = self.m_size / 2
 
-		self.m_pos = pos
+		self.m_pos = pygame.math.Vector2(pos)
 		self.rect: pygame.Rect = self.image.get_rect()
 		self.rect.centerx = round(pos.x)
 		self.rect.centery = round(pos.y)
@@ -34,7 +34,7 @@ class Playground_Object(pygame.sprite.Sprite):
 
 	def setDisplacement(self, displacement: pygame.math.Vector2):
 		self.m_pos += displacement
-		self.setCenter(self.m_pos)
+		self.updateCenterDependingOnPos()
 
 	def check_and_clamp_ip_with_rect(self, rect: pygame.Rect) :
 		top_check: bool = rect.top > self.m_pos.y - self.m_half_size.y
