@@ -39,20 +39,34 @@ class User_Interface:
 				print("No suitable font found! Text rendering might fail.")
 				self.m_font = None
 
-	def update(self, health: int, score: int):
+	def update(self, health: int, current_weapon: str, score: int):
 		self.updateFps()
 
 		self.writeFPS(self.m_fps_str)
-		self.writeHealth(health)
+
+		healthRectSize: pygame.Vector2 = self.writeHealth(health)
+		self.writeCurrentWeapon(healthRectSize, current_weapon)
+
 		self.writeScore(score)
 
-	def writeHealth(self, health: int):
+	def writeHealth(self, health: int) -> pygame.Vector2:
 		if self.m_font:
 			text: str = f"HP: {health}"
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
 			text_rect.bottomleft = (padding, self.m_window.get_height() - padding)
+			self.m_window.blit(text_surface, text_rect)
+			return pygame.Vector2(text_rect.size)
+		else:
+			return pygame.Vector2(0, 0)
+
+	def writeCurrentWeapon(self, healthRectSize: pygame.Vector2, current_weapon: str):
+		if self.m_font:
+			text_surface = self.m_font.render(current_weapon, True, colors.WHITE)
+			text_rect = text_surface.get_rect()
+			padding = 10
+			text_rect.bottomleft = (padding, self.m_window.get_height() - padding - healthRectSize.y)
 			self.m_window.blit(text_surface, text_rect)
 
 	def writeScore(self, score: int):

@@ -90,7 +90,7 @@ while running:
 	# Draw game stuff
 	user_interface.resetWindowFill()
 	game.draw()
-	user_interface.update(player.m_health, game.m_score)
+	user_interface.update(player.m_health, player.m_current_weapon_str, game.m_score)
 
 	# Update the display
 	pygame.display.flip()
