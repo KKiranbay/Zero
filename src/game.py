@@ -8,7 +8,6 @@ import spawner
 from camera import Camera
 from game_events_dictionary import GameEventsDictionary
 from playground import Playground
-from game_objects.playground_object import Playground_Object
 from time_handler import Time_Handler
 
 class Game:
@@ -71,9 +70,17 @@ class Game:
 	def check_collisions(self):
 		projectile_npc_collisions = pygame.sprite.groupcollide(self.m_projectiles, self.m_npcs, False, False)
 		for projectile, npcs_hit in projectile_npc_collisions.items():
-			projectile.on_collision_with_npc(game=self, collided_with=npcs_hit)
+			npcs_hit_forreal: set[pygame.sprite.Sprite] = set()
 			for npc in npcs_hit:
-				npc.on_collision_with_projectile(game=self, collided_with=[projectile])
+				if pygame.sprite.collide_mask(projectile, npc):
+					npcs_hit_forreal.add(npc)
+
+			if len(npcs_hit_forreal) == 0:
+				continue
+
+			projectile.on_collision_with_npcs(game=self, npcs_hit=npcs_hit_forreal)
+			for npc in npcs_hit:
+				npc.on_collision_with_projectile(game=self, collided_projectile=projectile)
 
 		char_npc_collisions = pygame.sprite.groupcollide(self.m_chars, self.m_npcs, False, False)
 		for char, npcs_hit in char_npc_collisions.items():
@@ -90,12 +97,10 @@ class Game:
 				npc.on_collision_with_char(game=self, char_hit=char)
 
 		for sprite in self.m_chars.sprites():
-			p_o: Playground_Object = sprite
-			p_o.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
+			sprite.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
 
 		for sprite in self.m_npcs.sprites():
-			p_o: Playground_Object = sprite
-			p_o.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
+			sprite.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
 
 	def get_screen_offset(self) -> pygame.math.Vector2:
 		return self.m_camera.m_screen_offset

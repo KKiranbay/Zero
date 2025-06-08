@@ -14,15 +14,20 @@ from game_objects.characters.character import Character
 from game_objects.npcs.npc import NPC, NPC_Type
 
 import resources.colors as colors
+from resources.shape_png_factory import create_triangle_png
 
 
 # Initialize Pygame
 pygame.init()
 
-MAX_HZ: int = 240  # 240 Hz update rate
+MAX_HZ: int = 0  # 240 Hz update rate
 desired_framerate: float = 0
 if MAX_HZ != 0:
 	desired_framerate = 1.0 / MAX_HZ
+
+# Triangle PNG
+image_filename = "enemy_triangle.png"
+create_triangle_png(image_filename, (100, 100), colors.PURPLE)
 
 # Time Handler
 time_handler: Time_Handler = Time_Handler()

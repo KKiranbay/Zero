@@ -39,7 +39,7 @@ class Character(Playground_Object):
 			pygame.Vector2(self.m_half_size.x, self.m_half_size.y)
 		]
 
-		self.updateDrawPolygonAndMask()
+		self.update_draw_polygon_and_mask()
 
 		# Weapon
 		self.m_current_weapon: int = 1
@@ -57,8 +57,8 @@ class Character(Playground_Object):
 		self.m_deploy_delay_ms: float = (60.0 / shot_rpm) * 1000.0 # ms
 
 	def update(self, dt_s: float, game: Game):
-		self.updateLookDirection(game)
-		self.updateDrawPolygonAndMask()
+		self.update_look_direction(game)
+		self.update_draw_polygon_and_mask()
 
 		keys = pygame.key.get_pressed()
 
@@ -68,7 +68,7 @@ class Character(Playground_Object):
 
 		self.check_weapon_select(keys, game)
 
-	def updateLookDirection(self, game: Game):
+	def update_look_direction(self, game: Game):
 		mousePos: tuple[int, int] = pygame.mouse.get_pos()
 
 		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
@@ -78,10 +78,10 @@ class Character(Playground_Object):
 		else:
 			self.m_look_direction.normalize_ip()
 
-	def updateDrawPolygonAndMask(self):
+	def update_draw_polygon_and_mask(self):
 		self.image.fill((0, 0, 0, 0))
 
-		reference_vector = pygame.Vector2(0, -1) # up
+		reference_vector: pygame.Vector2 = pygame.Vector2(0, -1) # up
 		current_angle = reference_vector.angle_to(self.m_look_direction)
 
 		rotated_points = []
@@ -98,9 +98,6 @@ class Character(Playground_Object):
 		self.mask = pygame.mask.from_surface(self.image)
 
 	def move_char(self, keys, dt_s: float, game: Game):
-		original_x = self.rect.centerx
-		original_y = self.rect.centery
-
 		movement_direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
 		if movement_direction.length() == 0:
 			return
