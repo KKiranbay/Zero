@@ -56,14 +56,9 @@ class Game:
 	def draw(self):
 		self.m_playground.refill_playground()
 
-		for sprite in self.m_npcs:
-			self.m_playground.m_surface.blit(sprite.image, sprite.rect.topleft)
-
-		for sprite in self.m_projectiles:
-			self.m_playground.m_surface.blit(sprite.image, sprite.rect.topleft)
-
-		for sprite in self.m_chars:
-			self.m_playground.m_surface.blit(sprite.image, sprite.rect.topleft)
+		self.m_npcs.draw(self.m_playground.m_surface)
+		self.m_projectiles.draw(self.m_playground.m_surface)
+		self.m_chars.draw(self.m_playground.m_surface)
 
 		self.m_playground.draw_playground(self.m_camera.m_screen_offset)
 
