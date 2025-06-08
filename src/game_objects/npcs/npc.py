@@ -67,7 +67,7 @@ class NPC(Playground_Object):
 			game.m_score += 1
 			self.kill()
 
-		#collided_projectile.kill()
+		collided_projectile.kill()
 
 	def on_collision_with_char(self, game, char_hit: pygame.sprite.Sprite):
 		pass

@@ -6,7 +6,7 @@ class Playground_Object(pygame.sprite.Sprite):
 	def __init__(self, pos: pygame.Vector2, size: pygame.Vector2) -> None:
 		super().__init__()
 
-		self.image: pygame.Surface = pygame.Surface((size.x, size.y))
+		self.image: pygame.Surface = pygame.Surface((size.x, size.y), pygame.SRCALPHA)
 		self.image.fill(colors.WHITE)
 
 		self.m_size: pygame.Vector2 = pygame.Vector2(size)

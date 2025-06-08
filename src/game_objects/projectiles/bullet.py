@@ -10,7 +10,7 @@ class Bullet(Playground_Object):
 		super().__init__(projectile_pos, projectile_size)
 		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(direction)
 		self.m_damage: int = 20
-		self.m_speed: float = 100.0
+		self.m_speed: float = 500.0
 
 		reference_vector = pygame.Vector2(0, -1)
 		current_angle = reference_vector.angle_to(self.m_direction)
