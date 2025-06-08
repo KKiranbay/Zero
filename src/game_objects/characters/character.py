@@ -5,8 +5,10 @@ import resources.colors as colors
 
 from game import Game
 from game_objects.playground_object import Playground_Object
+
 from game_objects.projectiles.bullet import Bullet
 from game_objects.projectiles.mine import Mine
+from game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
 
 class Character(Playground_Object):
 	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
@@ -55,6 +57,11 @@ class Character(Playground_Object):
 		self.m_last_deploy_time: float = 0
 		shot_rpm: int = 30
 		self.m_deploy_delay_ms: float = (60.0 / shot_rpm) * 1000.0 # ms
+
+		# Mine
+		self.m_last_throw_time: float = 0
+		throw_rpm: int = 600
+		self.m_throw_delay_ms: float = (60.0 / throw_rpm) * 1000.0 # ms
 
 	def update(self, dt_s: float, game: Game):
 		self.update_look_direction(game)
@@ -122,6 +129,10 @@ class Character(Playground_Object):
 		mine: Mine = Mine(self.m_pos, pygame.Vector2(25, 25))
 		game.add_projectile_object(mine)
 
+	def deploy_barbed_chain(self, game: Game):
+		barbed_chain: GrowingBarbedChain = GrowingBarbedChain(self.m_look_direction, self.m_pos, pygame.Vector2(30, 10))
+		game.add_projectile_object(barbed_chain)
+
 	def on_collision_with_npcs(self, game: Game, npcs_hit: set[pygame.sprite.Sprite]):
 		already_collided = False
 		for npc in npcs_hit:
@@ -148,6 +159,8 @@ class Character(Playground_Object):
 			self.change_current_weapon(1)
 		if keys[pygame.K_e]:
 			self.change_current_weapon(2)
+		if keys[pygame.K_r]:
+			self.change_current_weapon(3)
 
 	def change_current_weapon(self, weapon_index: int):
 		self.m_current_weapon = weapon_index
@@ -156,17 +169,24 @@ class Character(Playground_Object):
 				self.m_current_weapon_str: str = "Bullets"
 			case 2:
 				self.m_current_weapon_str: str = "Mines"
+			case 3:
+				self.m_current_weapon_str: str = "Barbed Chain"
 
 	def current_weapon_triggered(self, game: Game):
+		total_duration = game.m_time_handler.get_total_duration_ms()
+
 		match self.m_current_weapon:
 			case 1:
-				total_duration = game.m_time_handler.get_total_duration_ms()
 				if self.m_left_click and (total_duration - self.m_last_shoot_time) >= self.m_shoot_delay_ms:
 					self.m_last_shoot_time = total_duration
 					self.shoot_bullet(game)
 
 			case 2:
-				total_duration = game.m_time_handler.get_total_duration_ms()
 				if self.m_left_click and (total_duration - self.m_last_deploy_time) >= self.m_deploy_delay_ms:
 					self.m_last_deploy_time = total_duration
 					self.deploy_mine(game)
+
+			case 3:
+				if self.m_left_click and (total_duration - self.m_last_throw_time) >= self.m_throw_delay_ms:
+					self.m_last_throw_time = total_duration
+					self.deploy_barbed_chain(game)
