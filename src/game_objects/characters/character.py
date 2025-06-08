@@ -15,6 +15,7 @@ class Character(Playground_Object):
 		self.m_health: int = 30
 		self.m_char_speed: float = char_speed
 		self.m_look_direction: pygame.Vector2 = pygame.Vector2(1, 0)
+		self.m_color: tuple[int, int, int] = colors.DARK_GREEN
 
 		# Enemy NPC collision
 		self.m_in_collision_with_npc: set[pygame.sprite.Sprite] = set()
@@ -92,7 +93,7 @@ class Character(Playground_Object):
 								rotated_point.y + self.m_half_hitbox_size.y)
 			rotated_points.append(translated_point)
 
-		pygame.draw.polygon(self.image, colors.DARK_GREEN, rotated_points)
+		pygame.draw.polygon(self.image, self.m_color, rotated_points)
 
 		self.mask = pygame.mask.from_surface(self.image)
 
@@ -117,8 +118,6 @@ class Character(Playground_Object):
 		self.current_weapon_triggered(game)
 
 	def shoot_bullet(self, game: Game):
-
-
 		bullet: Bullet = Bullet(self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
 		game.add_projectile_object(bullet)
 
@@ -141,7 +140,6 @@ class Character(Playground_Object):
 
 	def damaged(self, game: Game):
 		self.m_health -= 1
-		print(f"Health: {self.m_health}")
 		if (self.m_health == 0):
 			chars_died: list[int] = game.m_game_events.getEvent(game_events_dictionary.CHAR_NO_DIED_EVENT)
 			chars_died.append(1)

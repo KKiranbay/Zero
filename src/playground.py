@@ -13,5 +13,5 @@ class Playground:
 	def refill_playground(self):
 		self.m_surface.fill(self.m_color)
 
-	def draw_playground(self, camera_offset: pygame.math.Vector2):
-		self.m_parent.blit(self.m_surface, camera_offset)
+	def draw_playground(self, offset: pygame.math.Vector2):
+		self.m_parent.blit(self.m_surface, offset)

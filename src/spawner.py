@@ -5,7 +5,7 @@ import pygame
 import game_events_dictionary
 
 from playground import Playground
-from game_objects.npc import NPC, NPC_Type
+from game_objects.npcs.npc import NPC, NPC_Type
 
 
 last_spawn: int = 0
@@ -18,8 +18,28 @@ def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int
 		size_int = random.randint(20, 40)
 		enemy_size: pygame.Vector2 = pygame.Vector2(size_int, size_int)
 		enemy_size_half: pygame.Vector2 = enemy_size / 2
-		random_x: float = random.uniform(playground.m_game_world_rect.left + enemy_size_half.x, playground.m_game_world_rect.right - enemy_size_half.x)
-		random_y: float = random.uniform(playground.m_game_world_rect.top + enemy_size_half.y, playground.m_game_world_rect.bottom - enemy_size_half.y)
+
+		random_spawn_edge: int = random.choice([1, 2, 3, 4])
+		random_x: float = 0
+		random_y: float = 0
+
+		match random_spawn_edge:
+			case 1: # TOP
+				random_x = random.uniform(playground.m_game_world_rect.left + enemy_size_half.x, playground.m_game_world_rect.right - enemy_size_half.x)
+				random_y = playground.m_game_world_rect.top + enemy_size_half.y
+
+			case 2: # RIGHT
+				random_x = playground.m_game_world_rect.right - enemy_size_half.x
+				random_y = random.uniform(playground.m_game_world_rect.top + enemy_size_half.y, playground.m_game_world_rect.bottom - enemy_size_half.y)
+
+			case 3: # BOTTOM
+				random_x = random.uniform(playground.m_game_world_rect.left + enemy_size_half.x, playground.m_game_world_rect.right - enemy_size_half.x)
+				random_y = playground.m_game_world_rect.bottom - enemy_size_half.y
+
+			case 4: # LEFT
+				random_x = playground.m_game_world_rect.left + enemy_size_half.x
+				random_y = random.uniform(playground.m_game_world_rect.top + enemy_size_half.y, playground.m_game_world_rect.bottom - enemy_size_half.y)
+
 		random_pos: pygame.Vector2 = pygame.Vector2(random_x, random_y)
 
 		temp_npc_rect = pygame.Rect(0, 0, enemy_size.x, enemy_size.y)

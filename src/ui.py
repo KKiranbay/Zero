@@ -17,15 +17,15 @@ class User_Interface:
 		self.m_FPS_UPDATE_INTERVAL: float = 0.5
 
 		self.m_font: pygame.font.Font | None = None
-		self.setFont()
+		self.set_font()
 
-	def getWindow(self) -> pygame.Surface:
+	def get_window(self) -> pygame.Surface:
 		return self.m_window
 
-	def resetWindowFill(self):
+	def reset_window_fill(self):
 		self.m_window.fill(colors.BLACK)
 
-	def setFont(self):
+	def set_font(self):
 		try:
 			self.m_font = pygame.font.Font(None, 48)
 		except pygame.error:
@@ -40,16 +40,16 @@ class User_Interface:
 				self.m_font = None
 
 	def update(self, health: int, current_weapon: str, score: int):
-		self.updateFps()
+		self.update_FPS()
 
-		self.writeFPS(self.m_fps_str)
+		self.write_FPS(self.m_fps_str)
 
-		healthRectSize: pygame.Vector2 = self.writeHealth(health)
-		self.writeCurrentWeapon(healthRectSize, current_weapon)
+		healthRectSize: pygame.Vector2 = self.write_health(health)
+		self.write_current_weapon(healthRectSize, current_weapon)
 
-		self.writeScore(score)
+		self.write_score(score)
 
-	def writeHealth(self, health: int) -> pygame.Vector2:
+	def write_health(self, health: int) -> pygame.Vector2:
 		if self.m_font:
 			text: str = f"HP: {health}"
 			text_surface = self.m_font.render(text, True, colors.WHITE)
@@ -61,7 +61,7 @@ class User_Interface:
 		else:
 			return pygame.Vector2(0, 0)
 
-	def writeCurrentWeapon(self, healthRectSize: pygame.Vector2, current_weapon: str):
+	def write_current_weapon(self, healthRectSize: pygame.Vector2, current_weapon: str):
 		if self.m_font:
 			text_surface = self.m_font.render(current_weapon, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
@@ -69,7 +69,7 @@ class User_Interface:
 			text_rect.bottomleft = (padding, self.m_window.get_height() - padding - healthRectSize.y)
 			self.m_window.blit(text_surface, text_rect)
 
-	def writeScore(self, score: int):
+	def write_score(self, score: int):
 		if self.m_font:
 			text: str = f"Score: {score}"
 			text_surface = self.m_font.render(text, True, colors.WHITE)
@@ -78,14 +78,14 @@ class User_Interface:
 			text_rect.center = (self.m_window.get_width() / 2, padding + text_rect.height / 2)
 			self.m_window.blit(text_surface, text_rect)
 
-	def updateFps(self):
+	def update_FPS(self):
 		current_time: float = self.m_timer_handler.get_total_duration_ms()
 		if current_time - self.m_fps_start_timer >= self.m_FPS_UPDATE_INTERVAL:
 			fps: int = self.m_timer_handler.get_fps()
 			self.m_fps_str = f"FPS: {fps}"
 			self.m_fps_start_timer = current_time
 
-	def writeFPS(self, text: str):
+	def write_FPS(self, text: str):
 		if self.m_font:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()

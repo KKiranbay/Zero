@@ -10,8 +10,8 @@ from ui import User_Interface
 import game_events_dictionary
 from game_events_dictionary import GameEventsDictionary
 
-from game_objects.character import Character
-from game_objects.npc import NPC, NPC_Type
+from game_objects.characters.character import Character
+from game_objects.npcs.npc import NPC, NPC_Type
 
 import resources.colors as colors
 
@@ -39,13 +39,13 @@ game_events: GameEventsDictionary = GameEventsDictionary()
 
 playground_width = 500
 playground_height = 500
-playground = Playground(user_interface.getWindow(), playground_width, playground_height, colors.BEIGE)
+playground = Playground(user_interface.get_window(), playground_width, playground_height, colors.BEIGE)
 game.add_playground(playground)
 
 player = Character(pygame.Vector2(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2), pygame.Vector2(50,50), 500)
 game.add_char_object(player)
 
-camera = Camera(pygame.Vector2(player.rect.center), user_interface.getWindow().get_width(), user_interface.getWindow().get_height())
+camera = Camera(pygame.Vector2(player.rect.center), user_interface.get_window().get_width(), user_interface.get_window().get_height())
 game.add_camera(camera)
 
 target = NPC(NPC_Type.ENEMY, pygame.Vector2(100, 100), pygame.Vector2(20,20))
@@ -88,7 +88,7 @@ while running:
 	game_events.resetEvents()
 
 	# Draw game stuff
-	user_interface.resetWindowFill()
+	user_interface.reset_window_fill()
 	game.draw()
 	user_interface.update(player.m_health, player.m_current_weapon_str, game.m_score)
 
