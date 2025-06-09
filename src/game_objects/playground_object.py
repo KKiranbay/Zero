@@ -17,6 +17,12 @@ class Playground_Object(pygame.sprite.Sprite):
 		self.rect.centerx = round(pos.x)
 		self.rect.centery = round(pos.y)
 
+		self.m_reference_vector: pygame.Vector2 = pygame.Vector2(0, -1) # up
+		self.m_look_direction: pygame.math.Vector2 = pygame.math.Vector2(0, -1)
+		self.m_look_angle: float = self.m_reference_vector.angle_to(self.m_look_direction)
+
+		self.m_attach_anchor_pos: pygame.math.Vector2 = self.m_pos
+
 	def update(self, dt_s: float, game):
 		pass
 
@@ -63,3 +69,6 @@ class Playground_Object(pygame.sprite.Sprite):
 		left_check: bool = rect.left > self.m_pos.x + self.m_half_size.x
 		right_check: bool = rect.right < self.m_pos.x - self.m_half_size.x
 		return top_check or bottom_check or left_check or right_check
+
+	def get_attach_anchor_pos(self) -> pygame.math.Vector2:
+		return self.m_attach_anchor_pos

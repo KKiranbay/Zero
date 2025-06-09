@@ -24,7 +24,6 @@ class Character(Playground_Object):
 
 		self.m_health: int = 30
 		self.m_char_speed: float = char_speed
-		self.m_look_direction: pygame.Vector2 = pygame.Vector2(1, 0)
 		self.m_color: tuple[int, int, int] = colors.DARK_GREEN
 
 		# Enemy NPC collision
@@ -58,7 +57,7 @@ class Character(Playground_Object):
 
 		# Weapon Inventory
 		self.rifle: Weapon = Rifle(self.m_pos, Vector2(5, 10),
-							  300, self.m_look_direction, colors.PINK_RED)
+							  300, self.m_look_direction, colors.PINK_RED, self, True)
 		self.mine_deployer: Weapon = MineDeployer(self.m_pos, Vector2(5, 10),
 							  30, self.m_look_direction, colors.SOFT_GREEN)
 		self.chain_deployer: Weapon = ChainDeployer(self.m_pos, Vector2(5,10),
@@ -72,6 +71,8 @@ class Character(Playground_Object):
 		self.update_look_direction(game)
 		self.update_draw_polygon_and_mask()
 		self.update_equipped_pos_direction()
+
+		self.rifle.update(dt_s, game)
 
 		keys = pygame.key.get_pressed()
 
@@ -88,21 +89,21 @@ class Character(Playground_Object):
 
 		mouse_pos_relative_to_playground: pygame.math.Vector2 = mousePos - game.get_screen_offset()
 		self.m_look_direction: pygame.math.Vector2 = mouse_pos_relative_to_playground - self.m_pos
+
 		if self.m_look_direction.length() == 0:
 			self.m_look_direction.update(1, 0)  # Default direction if no movement
 		else:
 			self.m_look_direction.normalize_ip()
 
+		self.m_look_angle = self.m_reference_vector.angle_to(self.m_look_direction)
+
 	def update_draw_polygon_and_mask(self):
 		self.image.fill((0, 0, 0, 0))
-
-		reference_vector: pygame.Vector2 = pygame.Vector2(0, -1) # up
-		current_angle = reference_vector.angle_to(self.m_look_direction)
 
 		rotated_points = []
 		for point in self.m_points:
 			# Rotate around (0,0) (the center of our conceptual sprite)
-			rotated_point = point.rotate(current_angle)
+			rotated_point = point.rotate(self.m_look_angle)
 			# Translate back to image coordinates (add half_width/height to move origin to top-left)
 			translated_point = (rotated_point.x + self.m_half_hitbox_size.x,
 								rotated_point.y + self.m_half_hitbox_size.y)
@@ -113,9 +114,6 @@ class Character(Playground_Object):
 		self.mask = pygame.mask.from_surface(self.image)
 
 	def update_equipped_pos_direction(self):
-		self.rifle.m_pos = self.m_pos
-		self.rifle.m_direction = self.m_look_direction
-
 		self.mine_deployer.m_pos = self.m_pos
 		self.mine_deployer.m_direction = self.m_look_direction
 
@@ -196,3 +194,13 @@ class Character(Playground_Object):
 			return
 
 		self.chain_deployer.attack(game)
+
+	def get_attach_anchor_pos(self) -> Vector2:
+		top: Vector2 = Vector2(self.m_points[0]) # up
+
+		top.rotate_ip(self.m_look_angle)
+
+		top.x = top.x + self.m_pos.x
+		top.y = top.y + self.m_pos.y
+
+		return top

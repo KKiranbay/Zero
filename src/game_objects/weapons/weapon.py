@@ -11,7 +11,9 @@ class Weapon(Playground_Object):
 			  pos: Vector2, size: Vector2,
 			  attack_rpm: float,
 			  direction: Vector2,
-			  color: tuple[int, int, int]) -> None:
+			  color: tuple[int, int, int],
+			  parent: Playground_Object | None = None,
+			  attach_to_parent: bool = False) -> None:
 		super().__init__(pos, size)
 
 		self.m_weapon_name: str = name
@@ -34,8 +36,14 @@ class Weapon(Playground_Object):
 		self.m_attack_rpm: float = attack_rpm
 		self.m_attack_cooldown_ms: float = (60.0 / self.m_attack_rpm) * 1000.0 # ms
 
+		self.m_parent = parent
+		self.m_attach_to_parent = attach_to_parent
+
 	def update(self, dt_s: float, game: Game):
-		pass
+		if self.m_attach_to_parent and self.m_parent != None:
+			self.m_pos = self.m_parent.get_attach_anchor_pos()
+			self.m_direction = self.m_parent.m_look_direction
+			pass
 
 	def update_attack_rpm(self, new_rpm: float):
 		self.m_attack_rpm = new_rpm
