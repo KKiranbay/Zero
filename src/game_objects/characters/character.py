@@ -1,4 +1,5 @@
 import pygame
+from pygame import Vector2
 
 import game_events_dictionary
 import resources.colors as colors
@@ -9,6 +10,9 @@ from game_objects.playground_object import Playground_Object
 from game_objects.projectiles.bullet import Bullet
 from game_objects.projectiles.mine import Mine
 from game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
+
+from game_objects.weapons.weapon import Weapon
+from game_objects.weapons.rifle import Rifle
 
 class Character(Playground_Object):
 	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
@@ -36,9 +40,9 @@ class Character(Playground_Object):
 		self.rect = self.image.get_rect(center=(self.m_pos))
 
 		self.m_points: list[pygame.Vector2] = [
-			pygame.Vector2(0, -self.m_half_size.y),
-			pygame.Vector2(-self.m_half_size.x, self.m_half_size.y),
-			pygame.Vector2(self.m_half_size.x, self.m_half_size.y)
+			pygame.Vector2(0, -self.m_half_size.y),						# top
+			pygame.Vector2(-self.m_half_size.x, self.m_half_size.y),	# bottom right
+			pygame.Vector2(self.m_half_size.x, self.m_half_size.y)		# bottom left
 		]
 
 		self.update_draw_polygon_and_mask()
@@ -65,11 +69,17 @@ class Character(Playground_Object):
 
 		self.m_total_duration: float = 0
 
+		# Weapon Inventory
+		self.rifle : Weapon = Rifle(self.m_pos, Vector2(5,10),
+							  300, self.m_look_direction, colors.PINK_RED)
+		self.m_weapon_inventory: dict[int, Weapon] = {}
+
 	def update(self, dt_s: float, game: Game):
 		self.m_total_duration = game.m_time_handler.get_total_duration_ms()
 
 		self.update_look_direction(game)
 		self.update_draw_polygon_and_mask()
+		self.update_equipped_pos_direction()
 
 		keys = pygame.key.get_pressed()
 
@@ -110,6 +120,10 @@ class Character(Playground_Object):
 
 		self.mask = pygame.mask.from_surface(self.image)
 
+	def update_equipped_pos_direction(self):
+		self.rifle.m_pos = self.m_pos
+		self.rifle.m_direction = self.m_look_direction
+
 	def move_char(self, keys, dt_s: float, game: Game):
 		movement_direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
 		if movement_direction.length() == 0:
@@ -128,7 +142,8 @@ class Character(Playground_Object):
 		if not self.m_left_click:
 			return
 
-		self.current_weapon_triggered(game)
+		self.rifle.attack(game)
+		#self.current_weapon_triggered(game)
 
 	def shoot_bullet(self, game: Game):
 		bullet: Bullet = Bullet(self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
