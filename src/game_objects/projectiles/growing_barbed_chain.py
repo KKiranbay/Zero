@@ -17,7 +17,6 @@ class GrowingBarbedChain(Playground_Object):
 		self.m_height_limit: int = 100
 
 		self.image.fill(colors.DARK_GREY)
-		self.image.set_colorkey(colors.WHITE) # transparent
 
 		self.m_original_image: pygame.Surface = self.image.copy()
 		self.m_original_height = self.m_original_image.get_height()

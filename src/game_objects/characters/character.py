@@ -13,6 +13,8 @@ from game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
 
 from game_objects.weapons.weapon import Weapon
 from game_objects.weapons.rifle import Rifle
+from game_objects.weapons.mine_deployer import MineDeployer
+from game_objects.weapons.chain_deployer import ChainDeployer
 
 class Character(Playground_Object):
 	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
@@ -62,7 +64,7 @@ class Character(Playground_Object):
 		shot_rpm: int = 30
 		self.m_deploy_delay_ms: float = (60.0 / shot_rpm) * 1000.0 # ms
 
-		# Mine
+		# Thrower
 		self.m_last_throw_time: float = 0
 		throw_rpm: int = 10
 		self.m_throw_delay_ms: float = (60.0 / throw_rpm) * 1000.0 # ms
@@ -70,8 +72,12 @@ class Character(Playground_Object):
 		self.m_total_duration: float = 0
 
 		# Weapon Inventory
-		self.rifle : Weapon = Rifle(self.m_pos, Vector2(5,10),
+		self.rifle : Weapon = Rifle(self.m_pos, Vector2(5, 10),
 							  300, self.m_look_direction, colors.PINK_RED)
+		self.mine_deployer : Weapon = MineDeployer(self.m_pos, Vector2(5, 10),
+							  30, self.m_look_direction, colors.SOFT_GREEN)
+		self.chain_deployer : Weapon = ChainDeployer(self.m_pos, Vector2(5,10),
+							  10, self.m_look_direction, colors.DARK_GREY)
 		self.m_weapon_inventory: dict[int, Weapon] = {}
 
 	def update(self, dt_s: float, game: Game):
@@ -123,6 +129,12 @@ class Character(Playground_Object):
 	def update_equipped_pos_direction(self):
 		self.rifle.m_pos = self.m_pos
 		self.rifle.m_direction = self.m_look_direction
+
+		self.mine_deployer.m_pos = self.m_pos
+		self.mine_deployer.m_direction = self.m_look_direction
+
+		self.chain_deployer.m_pos = self.m_pos
+		self.chain_deployer.m_direction = self.m_look_direction
 
 	def move_char(self, keys, dt_s: float, game: Game):
 		movement_direction = pygame.Vector2(keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w])
@@ -199,14 +211,10 @@ class Character(Playground_Object):
 		if not keys[pygame.K_e]:
 			return
 
-		if (self.m_total_duration - self.m_last_deploy_time) >= self.m_deploy_delay_ms:
-					self.m_last_deploy_time = self.m_total_duration
-					self.deploy_mine(game)
+		self.mine_deployer.attack(game)
 
 	def try_to_throw_barbed_chain(self, keys, game: Game):
 		if not keys[pygame.K_r]:
 			return
 
-		if (self.m_total_duration - self.m_last_throw_time) >= self.m_throw_delay_ms:
-					self.m_last_throw_time = self.m_total_duration
-					self.deploy_barbed_chain(game)
+		self.chain_deployer.attack(game)

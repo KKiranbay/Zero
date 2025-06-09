@@ -20,7 +20,7 @@ class Playground_Object(pygame.sprite.Sprite):
 	def update(self, dt_s: float, game):
 		pass
 
-	def updateCenterDependingOnPos(self):
+	def update_center_depending_on_pos(self):
 		self.rect.centerx = round(self.m_pos.x)
 		self.rect.centery = round(self.m_pos.y)
 
@@ -30,11 +30,11 @@ class Playground_Object(pygame.sprite.Sprite):
 
 	def setPos(self, x: float, y: float):
 		self.m_pos.update(x, y)
-		self.updateCenterDependingOnPos()
+		self.update_center_depending_on_pos()
 
 	def setDisplacement(self, displacement: pygame.math.Vector2):
 		self.m_pos += displacement
-		self.updateCenterDependingOnPos()
+		self.update_center_depending_on_pos()
 
 	def check_and_clamp_ip_with_rect(self, rect: pygame.Rect) :
 		top_check: bool = rect.top > self.m_pos.y - self.m_half_size.y
@@ -55,7 +55,7 @@ class Playground_Object(pygame.sprite.Sprite):
 			self.m_pos.x = rect.right - self.m_half_size.x
 
 		if (top_check or bottom_check or left_check or right_check):
-			self.updateCenterDependingOnPos()
+			self.update_center_depending_on_pos()
 
 	def check_fully_left_rect(self, rect: pygame.Rect) -> bool :
 		top_check: bool = rect.top > self.m_pos.y + self.m_half_size.y
