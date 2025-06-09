@@ -7,6 +7,8 @@ import resources.colors as colors
 from game import Game
 from game_objects.playground_object import Playground_Object
 
+from game_objects.inventory.inventory import Inventory
+
 from game_objects.projectiles.bullet import Bullet
 from game_objects.projectiles.mine import Mine
 from game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
@@ -54,31 +56,15 @@ class Character(Playground_Object):
 		self.m_current_weapon_str: str = "Bullets"
 		self.m_left_click: bool = False
 
-		# Bullet
-		self.m_last_shoot_time: float = 0
-		shoot_rpm: int = 300
-		self.m_shoot_delay_ms: float = (60.0 / shoot_rpm) * 1000.0 # ms
-
-		# Mine
-		self.m_last_deploy_time: float = 0
-		shot_rpm: int = 30
-		self.m_deploy_delay_ms: float = (60.0 / shot_rpm) * 1000.0 # ms
-
-		# Thrower
-		self.m_last_throw_time: float = 0
-		throw_rpm: int = 10
-		self.m_throw_delay_ms: float = (60.0 / throw_rpm) * 1000.0 # ms
-
-		self.m_total_duration: float = 0
-
 		# Weapon Inventory
-		self.rifle : Weapon = Rifle(self.m_pos, Vector2(5, 10),
+		self.rifle: Weapon = Rifle(self.m_pos, Vector2(5, 10),
 							  300, self.m_look_direction, colors.PINK_RED)
-		self.mine_deployer : Weapon = MineDeployer(self.m_pos, Vector2(5, 10),
+		self.mine_deployer: Weapon = MineDeployer(self.m_pos, Vector2(5, 10),
 							  30, self.m_look_direction, colors.SOFT_GREEN)
-		self.chain_deployer : Weapon = ChainDeployer(self.m_pos, Vector2(5,10),
+		self.chain_deployer: Weapon = ChainDeployer(self.m_pos, Vector2(5,10),
 							  10, self.m_look_direction, colors.DARK_GREY)
-		self.m_weapon_inventory: dict[int, Weapon] = {}
+
+		self.m_inventory: Inventory = Inventory()
 
 	def update(self, dt_s: float, game: Game):
 		self.m_total_duration = game.m_time_handler.get_total_duration_ms()
@@ -155,7 +141,6 @@ class Character(Playground_Object):
 			return
 
 		self.rifle.attack(game)
-		#self.current_weapon_triggered(game)
 
 	def shoot_bullet(self, game: Game):
 		bullet: Bullet = Bullet(self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
@@ -199,13 +184,6 @@ class Character(Playground_Object):
 		match self.m_current_weapon:
 			case 1:
 				self.m_current_weapon_str: str = "Bullets"
-
-	def current_weapon_triggered(self, game: Game):
-		match self.m_current_weapon:
-			case 1:
-				if (self.m_total_duration - self.m_last_shoot_time) >= self.m_shoot_delay_ms:
-					self.m_last_shoot_time = self.m_total_duration
-					self.shoot_bullet(game)
 
 	def try_to_deploy_mines(self, keys, game: Game):
 		if not keys[pygame.K_e]:
