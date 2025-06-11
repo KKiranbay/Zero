@@ -4,7 +4,8 @@ import pygame
 
 import resources.colors as colors
 
-from game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import Playground_Object
+
 class NPC_Type(Enum):
 	ENEMY = 1
 	FRIENDLY = 2

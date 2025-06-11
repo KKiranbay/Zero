@@ -2,10 +2,10 @@ import random
 
 import pygame
 
-import game_events_dictionary
+import game.game_events_dictionary as game_events_dictionary
 
-from playground import Playground
-from game_objects.npcs.npc import NPC, NPC_Type
+from game.playground import Playground
+from game.game_objects.npcs.npc import NPC, NPC_Type
 
 
 last_spawn: int = 0

@@ -1,22 +1,22 @@
 import pygame
 from pygame import Vector2
 
-import game_events_dictionary
+import game.game_events_dictionary as game_events_dictionary
 import resources.colors as colors
 
-from game import Game
-from game_objects.playground_object import Playground_Object
+from game.game import Game
+from game.game_objects.playground_object import Playground_Object
 
-from game_objects.inventory.inventory import Inventory
+from game.game_objects.inventory.inventory import Inventory
 
-from game_objects.projectiles.bullet import Bullet
-from game_objects.projectiles.mine import Mine
-from game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
+from game.game_objects.projectiles.bullet import Bullet
+from game.game_objects.projectiles.mine import Mine
+from game.game_objects.projectiles.growing_barbed_chain import GrowingBarbedChain
 
-from game_objects.weapons.weapon import Weapon
-from game_objects.weapons.rifle import Rifle
-from game_objects.weapons.mine_deployer import MineDeployer
-from game_objects.weapons.chain_deployer import ChainDeployer
+from game.game_objects.weapons.weapon import Weapon
+from game.game_objects.weapons.rifle import Rifle
+from game.game_objects.weapons.mine_deployer import MineDeployer
+from game.game_objects.weapons.chain_deployer import ChainDeployer
 
 class Character(Playground_Object):
 	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):

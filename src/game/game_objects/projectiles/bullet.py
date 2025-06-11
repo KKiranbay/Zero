@@ -2,8 +2,9 @@ import pygame
 
 import resources.colors as colors
 
-from game_objects.playground_object import Playground_Object
-from game import Game
+from game.game import Game
+
+from game.game_objects.playground_object import Playground_Object
 
 class Bullet(Playground_Object):
 	def __init__(self, direction: pygame.math.Vector2, projectile_pos:  pygame.Vector2, projectile_size: pygame.Vector2) -> None:

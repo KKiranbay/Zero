@@ -1,17 +1,90 @@
 import pygame
+from states_enum import StatesEnum
+from states.state import State
+from states.game_state import GameState
+from states.main_menu_state import MainMenuState
+
+from time_handler import Time_Handler
+
+import game.game_events_dictionary as game_events_dictionary
+from game.game_events_dictionary import GameEventsDictionary
+
+class GameController:
+	def __init__(self):
+		pygame.init()
+		self.screen: pygame.Surface = pygame.display.set_mode((800, 600))
+
+		self.time_handler: Time_Handler = Time_Handler()
+		self.MAX_HZ: int = 0  # 240 Hz update rate
+		self.desired_framerate: float = 0
+		if self.MAX_HZ != 0:
+			self.desired_framerate = 1.0 / self.MAX_HZ
+
+		self.quit: bool = False
+		self.states: dict[StatesEnum, State] = {
+			StatesEnum.MAIN_MENU:	MainMenuState(),
+			StatesEnum.GAME_STATE:	GameState()
+		}
+
+		self.current_state: StatesEnum = StatesEnum.MAIN_MENU
+		self.state: State = self.states[self.current_state]
+		self.state.startup({})
+
+		self.game_events: GameEventsDictionary = GameEventsDictionary()
+
+	def event_loop(self):
+		pygame_events = pygame.event.get()
+
+		for pygame_event in pygame_events:
+			if pygame_event.type == pygame.QUIT:
+				self.quit = True
+			elif self.game_events.exists(pygame_event.type):
+				self.game_events.changeEvent(pygame_event.type, True)
+
+			self.state.get_event(pygame_event)
+
+	def update(self, dt):
+		if self.state.done:
+			self.change_state()
+		self.state.update(dt)
+
+	def draw(self):
+		self.state.draw(self.screen)
+		pygame.display.flip()
+
+	def change_state(self):
+		previous_state = self.current_state
+		self.current_state = self.state.next_state
+		persistent_data = self.state.persist
+		self.state.done = False
+		self.state = self.states[self.current_state]
+		self.state.startup(persistent_data)
+		self.state.previous_state = previous_state
+
+	def run(self):
+		while not self.quit:
+			self.time_handler.tick(self.desired_framerate)
+			self.event_loop()
+			self.update(self.desired_framerate)
+			self.draw()
+
+if __name__ == "__main__":
+	app = GameController()
+	app.run()
+	pygame.quit()
+
+
+import pygame
 
 # My code
-from camera import Camera
-from game import Game
-from playground import Playground
+from game.camera import Camera
+from game.game import Game
+from game.playground import Playground
 from time_handler import Time_Handler
-from ui import User_Interface
+from ui.ui import User_Interface
 
-import game_events_dictionary
-from game_events_dictionary import GameEventsDictionary
-
-from game_objects.characters.character import Character
-from game_objects.npcs.npc import NPC, NPC_Type
+from game.game_objects.characters.character import Character
+from game.game_objects.npcs.npc import NPC, NPC_Type
 
 import resources.colors as colors
 from resources.shape_png_factory import create_triangle_png
@@ -105,4 +178,3 @@ if restart:
 
 # Quit Pygame
 pygame.quit()
-

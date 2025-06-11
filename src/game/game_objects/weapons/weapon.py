@@ -1,9 +1,11 @@
 import pygame
 from pygame import Vector2
 
-from game import Game
-from game_objects.playground_object import Playground_Object
 import resources.colors as colors
+
+from game.game import Game
+
+from game.game_objects.playground_object import Playground_Object
 
 
 class Weapon(Playground_Object):

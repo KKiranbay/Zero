@@ -2,6 +2,7 @@ import pygame
 
 import resources.colors as colors
 
+
 class Playground_Object(pygame.sprite.Sprite):
 	def __init__(self, pos: pygame.Vector2, size: pygame.Vector2) -> None:
 		super().__init__()

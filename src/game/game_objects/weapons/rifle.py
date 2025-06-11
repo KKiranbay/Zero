@@ -1,12 +1,13 @@
 from pygame import Vector2
 
-from game import Game
+from game.game import Game
 
-from game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import Playground_Object
 
-from game_objects.projectiles.bullet import Bullet
+from game.game_objects.weapons.weapon import Weapon
 
-from game_objects.weapons.weapon import Weapon
+from game.game_objects.projectiles.bullet import Bullet
+
 
 class Rifle(Weapon):
 	def __init__(self, pos: Vector2, size: Vector2,

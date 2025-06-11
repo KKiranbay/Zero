@@ -1,4 +1,4 @@
-from game_objects.weapons.weapon import Weapon
+from game.game_objects.weapons.weapon import Weapon
 
 class Inventory:
 	def __init__(self) -> None:

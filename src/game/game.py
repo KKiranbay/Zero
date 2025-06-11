@@ -2,13 +2,17 @@ import math
 
 import pygame
 
-import game_events_dictionary
-import spawner
-
-from camera import Camera
-from game_events_dictionary import GameEventsDictionary
-from playground import Playground
 from time_handler import Time_Handler
+
+from game.camera import Camera
+
+import game.game_events_dictionary as game_events_dictionary
+from game.game_events_dictionary import GameEventsDictionary
+
+from game.playground import Playground
+
+import game.spawner as spawner
+
 
 class Game:
 	def __init__(self, time_handler: Time_Handler):

@@ -6,9 +6,9 @@ def generateEventId():
 	event_id += 1
 	return event_id
 
-SPAWN_NPC_EVENT: int =  generateEventId()
-CHAR_NO_DIED_EVENT: int = generateEventId()
-RESTART_EVENT: int =  generateEventId()
+RESTART_EVENT: int		=	generateEventId()
+SPAWN_NPC_EVENT: int	=	generateEventId()
+CHAR_NO_DIED_EVENT: int	=	generateEventId()
 
 
 class GameEventsDictionary:

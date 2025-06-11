@@ -1,9 +1,10 @@
 from pygame import Vector2
 
-from game import Game
-from game_objects.weapons.weapon import Weapon
+from game.game import Game
 
-from game_objects.projectiles.mine import Mine
+from game.game_objects.weapons.weapon import Weapon
+
+from game.game_objects.projectiles.mine import Mine
 
 class MineDeployer(Weapon):
 	def __init__(self, pos: Vector2, size: Vector2,
