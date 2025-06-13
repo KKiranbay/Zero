@@ -2,35 +2,30 @@ import math
 
 import pygame
 
-from time_handler import Time_Handler
+import events_dictionary as events_dictionary
+from events_dictionary import EventsDictionary
 
 from game.camera import Camera
-
-import game.game_events_dictionary as game_events_dictionary
-from game.game_events_dictionary import GameEventsDictionary
-
 from game.playground import Playground
-
 import game.spawner as spawner
 
+from time_handler import Time_Handler
 
 class Game:
-	def __init__(self, time_handler: Time_Handler):
-		self.m_time_handler: Time_Handler = time_handler
+	def __init__(self):
+		self.m_time_handler: Time_Handler = Time_Handler()
 
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_projectiles: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_npcs: pygame.sprite.Group = pygame.sprite.Group()
 
-		self.m_game_events: GameEventsDictionary
+		self.m_game_events: EventsDictionary = EventsDictionary()
 		self.m_playground: Playground
 
 		self.m_score: int = 0
 
-	def update(self, game_events: GameEventsDictionary):
+	def update(self):
 		dt_s: float = self.m_time_handler.get_delta_time_s()
-
-		self.m_game_events = game_events
 
 		self.m_chars.update(dt_s, self)
 		self.m_npcs.update(dt_s, self)
@@ -38,7 +33,7 @@ class Game:
 
 		self.check_collisions()
 
-		self.check_game_events(game_events)
+		self.check_game_events()
 
 		self.m_camera.update(self.m_chars.sprites()[0].rect.center)
 
@@ -104,9 +99,9 @@ class Game:
 	def get_screen_offset(self) -> pygame.math.Vector2:
 		return self.m_camera.m_screen_offset
 
-	def check_game_events(self, game_events: GameEventsDictionary):
-		self.check_spawn_event(game_events.getEvent(game_events_dictionary.SPAWN_NPC_EVENT))
-		self.check_chars_died_event(game_events.getEvent(game_events_dictionary.CHAR_NO_DIED_EVENT))
+	def check_game_events(self):
+		self.check_spawn_event(self.m_game_events.get_event(events_dictionary.SPAWN_NPC_EVENT))
+		self.check_chars_died_event(self.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT))
 
 	def check_spawn_event(self, spawn: bool):
 		if not spawn:
@@ -117,9 +112,9 @@ class Game:
 			self.add_npc_object(npc)
 
 	def get_exponential_spawn_interval(self) -> int:
-		BASE_SPAWN_INTERVAL_MS = 3000
-		DECAY_RATE = 0.01
-		MIN_SPAWN_INTERVAL_MS = 200
+		BASE_SPAWN_INTERVAL_MS: int = 3000
+		DECAY_RATE: float = 0.01
+		MIN_SPAWN_INTERVAL_MS: int = 200
 		game_duration_seconds = self.m_time_handler.get_total_duration_ms() / 1000.0
 		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds) + 200
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
@@ -129,4 +124,4 @@ class Game:
 			return
 
 		if isinstance(chars_died[0], int) and chars_died[0] == 1:
-			self.m_game_events.changeEvent(game_events_dictionary.RESTART_EVENT, True)
+			self.m_game_events.change_event(events_dictionary.RESTART_EVENT, True)

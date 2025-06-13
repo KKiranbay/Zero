@@ -1,5 +1,7 @@
 import pygame
 
+from singleton import singleton
+
 event_id: int = pygame.USEREVENT
 def generateEventId():
 	global event_id
@@ -10,25 +12,28 @@ RESTART_EVENT: int		=	generateEventId()
 SPAWN_NPC_EVENT: int	=	generateEventId()
 CHAR_NO_DIED_EVENT: int	=	generateEventId()
 
-
-class GameEventsDictionary:
+# Holds the current frames events inside a dictionary. Singleton
+@singleton
+class EventsDictionary:
 	def __init__(self):
 		self.m_events: dict = {}
-		self.resetEvents()
+		self.reset_events()
 
 	def exists(self, event: int) -> bool:
 		return event in self.m_events
 
-	def resetEvents(self):
-		self.m_events[pygame.MOUSEBUTTONDOWN] = False
-		self.m_events[pygame.MOUSEBUTTONUP] = False
+	def reset_events(self):
+		self.m_events[pygame.MOUSEBUTTONDOWN] = None
+		self.m_events[pygame.MOUSEBUTTONUP] = None
+
+		self.m_events[pygame.KEYDOWN] = None
 
 		self.m_events[SPAWN_NPC_EVENT] = False
 		self.m_events[CHAR_NO_DIED_EVENT] = []
 		self.m_events[RESTART_EVENT] = False
 
-	def changeEvent(self, event: int, value):
+	def change_event(self, event: int, value):
 		self.m_events[event] = value
 
-	def getEvent(self, event: int):
+	def get_event(self, event: int):
 		return self.m_events[event]

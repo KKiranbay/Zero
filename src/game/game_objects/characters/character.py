@@ -1,7 +1,7 @@
 import pygame
 from pygame import Vector2
 
-import game.game_events_dictionary as game_events_dictionary
+import events_dictionary as events_dictionary
 import resources.colors as colors
 
 from game.game import Game
@@ -130,9 +130,9 @@ class Character(Playground_Object):
 		self.setDisplacement(movement_direction)
 
 	def check_shoot(self, game: Game):
-		if game.m_game_events.getEvent(pygame.MOUSEBUTTONDOWN) and pygame.mouse.get_pressed()[0]:
+		if game.m_game_events.get_event(pygame.MOUSEBUTTONDOWN) and pygame.mouse.get_pressed()[0]:
 			self.m_left_click = True
-		if game.m_game_events.getEvent(pygame.MOUSEBUTTONUP) and not pygame.mouse.get_pressed()[0]:
+		if game.m_game_events.get_event(pygame.MOUSEBUTTONUP) and not pygame.mouse.get_pressed()[0]:
 			self.m_left_click = False
 
 		if not self.m_left_click:
@@ -168,9 +168,9 @@ class Character(Playground_Object):
 	def damaged(self, game: Game):
 		self.m_health -= 1
 		if (self.m_health == 0):
-			chars_died: list[int] = game.m_game_events.getEvent(game_events_dictionary.CHAR_NO_DIED_EVENT)
+			chars_died: list[int] = game.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT)
 			chars_died.append(1)
-			game.m_game_events.changeEvent(game_events_dictionary.CHAR_NO_DIED_EVENT, chars_died)
+			game.m_game_events.change_event(events_dictionary.CHAR_NO_DIED_EVENT, chars_died)
 			print("Dead!")
 
 	def check_weapon_select(self, keys, game: Game):

@@ -2,7 +2,7 @@ import random
 
 import pygame
 
-import game.game_events_dictionary as game_events_dictionary
+import events_dictionary as events_dictionary
 
 from game.playground import Playground
 from game.game_objects.npcs.npc import NPC, NPC_Type
@@ -53,12 +53,12 @@ def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int
 				break
 
 		if not collision_found:
-			pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
+			pygame.time.set_timer(events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
 			return NPC(NPC_Type.ENEMY, random_pos, enemy_size)
 
 		attempts += 1
 
-	pygame.time.set_timer(game_events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
+	pygame.time.set_timer(events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
 	return None
 
 

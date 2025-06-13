@@ -1,5 +1,8 @@
 from states_enum import StatesEnum
 
+from events_dictionary import EventsDictionary
+from screen import Screen
+
 class State:
 	def __init__(self):
 		self.done: bool = False
@@ -8,14 +11,17 @@ class State:
 		self.next_state: StatesEnum
 		self.previous_state: StatesEnum
 
+		self.events: EventsDictionary = EventsDictionary()
+		self.screen: Screen = Screen()
+
 	def startup(self, persistent):
 		self.persist = persistent
 
-	def get_event(self, event):
+	def check_events(self):
 		pass
 
-	def update(self, dt):
+	def update(self):
 		pass
 
-	def draw(self, surface):
+	def draw(self):
 		pass

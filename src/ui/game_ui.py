@@ -3,14 +3,13 @@ import pygame
 import resources.colors as colors
 
 from time_handler import Time_Handler
+from screen import Screen
 
+class Game_UI:
+	def __init__(self):
+		self.m_screen: Screen = Screen()
 
-class User_Interface:
-	def __init__(self, window_size: tuple[int, int], time_handler: Time_Handler):
-		self.m_window: pygame.Surface = pygame.display.set_mode(window_size)
-		pygame.display.set_caption("Movable Character with Toggleable Camera")
-
-		self.m_timer_handler: Time_Handler = time_handler
+		self.m_timer_handler: Time_Handler = Time_Handler()
 
 		self.m_fps_str: str = "FPS: 0"
 		self.m_fps_start_timer: float = self.m_timer_handler.get_total_duration_ms()
@@ -18,12 +17,6 @@ class User_Interface:
 
 		self.m_font: pygame.font.Font | None = None
 		self.set_font()
-
-	def get_window(self) -> pygame.Surface:
-		return self.m_window
-
-	def reset_window_fill(self):
-		self.m_window.fill(colors.BLACK)
 
 	def set_font(self):
 		try:
@@ -55,8 +48,8 @@ class User_Interface:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.bottomleft = (padding, self.m_window.get_height() - padding)
-			self.m_window.blit(text_surface, text_rect)
+			text_rect.bottomleft = (padding, self.m_screen.get_window().get_height() - padding)
+			self.m_screen.get_window().blit(text_surface, text_rect)
 			return pygame.Vector2(text_rect.size)
 		else:
 			return pygame.Vector2(0, 0)
@@ -66,8 +59,8 @@ class User_Interface:
 			text_surface = self.m_font.render(current_weapon, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.bottomleft = (padding, self.m_window.get_height() - padding - healthRectSize.y)
-			self.m_window.blit(text_surface, text_rect)
+			text_rect.bottomleft = (padding, self.m_screen.get_window().get_height() - padding - healthRectSize.y)
+			self.m_screen.get_window().blit(text_surface, text_rect)
 
 	def write_score(self, score: int):
 		if self.m_font:
@@ -75,8 +68,8 @@ class User_Interface:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.center = (self.m_window.get_width() / 2, padding + text_rect.height / 2)
-			self.m_window.blit(text_surface, text_rect)
+			text_rect.center = (self.m_screen.get_window().get_width() / 2, padding + text_rect.height / 2)
+			self.m_screen.get_window().blit(text_surface, text_rect)
 
 	def update_FPS(self):
 		current_time: float = self.m_timer_handler.get_total_duration_ms()
@@ -91,4 +84,4 @@ class User_Interface:
 			text_rect = text_surface.get_rect()
 			padding = 10
 			text_rect.topleft = (padding, padding)
-			self.m_window.blit(text_surface, text_rect)
+			self.m_screen.get_window().blit(text_surface, text_rect)

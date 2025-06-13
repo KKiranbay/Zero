@@ -2,6 +2,10 @@ import time
 
 import pygame
 
+from singleton import singleton
+
+# Singleton Time Handler
+@singleton
 class Time_Handler:
 	def __init__(self):
 		self.m_pygame_clock: pygame.time.Clock = pygame.time.Clock()

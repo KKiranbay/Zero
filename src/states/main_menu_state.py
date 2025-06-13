@@ -13,10 +13,15 @@ class MainMenuState(State):
 		self.persist = persistent
 		print("Main Menu is up!")
 
-	def get_event(self, event):
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_RETURN:
-				self.done = True
+	def check_events(self):
+		if not self.events.exists(pygame.KEYDOWN):
+			return
 
-	def draw(self, surface):
-		surface.fill((0, 255, 0))
+		if self.events.get_event(pygame.KEYDOWN) == None:
+			return
+
+		if self.events.get_event(pygame.KEYDOWN).key == pygame.K_RETURN:
+			self.done = True
+
+	def draw(self):
+		self.screen.get_window().fill((0, 255, 0))
