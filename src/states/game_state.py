@@ -31,17 +31,15 @@ class GameState(State):
 		# init
 		self.m_game: Game = Game()
 
-		screen: Screen = Screen()
-
 		playground_width = 500
 		playground_height = 500
-		self.m_playground = Playground(screen.get_window(), playground_width, playground_height, colors.BEIGE)
+		self.m_playground = Playground(self.screen.m_window, playground_width, playground_height, colors.BEIGE)
 		self.m_game.add_playground(self.m_playground)
 
 		self.m_player = Character(pygame.Vector2(self.m_playground.m_game_world_rect.width // 2, self.m_playground.m_game_world_rect.height // 2), pygame.Vector2(50,50), 500)
 		self.m_game.add_char_object(self.m_player)
 
-		self.m_camera = Camera(pygame.Vector2(self.m_player.rect.center), screen.get_window().get_width(), screen.get_window().get_height())
+		self.m_camera = Camera(pygame.Vector2(self.m_player.rect.center), self.screen.m_window.get_width(), self.screen.m_window.get_height())
 		self.m_game.add_camera(self.m_camera)
 
 		self.m_target = NPC(NPC_Type.ENEMY, pygame.Vector2(100, 100), pygame.Vector2(20,20))
@@ -51,12 +49,7 @@ class GameState(State):
 
 		self.m_game_ui : Game_UI = Game_UI()
 
-		print("Starting a new game!")
-
 	def check_events(self):
-		if not self.events.exists(pygame.KEYDOWN):
-			return
-
 		if self.events.get_event(pygame.KEYDOWN) == None:
 			return
 

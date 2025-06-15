@@ -48,8 +48,8 @@ class Game_UI:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.bottomleft = (padding, self.m_screen.get_window().get_height() - padding)
-			self.m_screen.get_window().blit(text_surface, text_rect)
+			text_rect.bottomleft = (padding, self.m_screen.m_window.get_height() - padding)
+			self.m_screen.m_window.blit(text_surface, text_rect)
 			return pygame.Vector2(text_rect.size)
 		else:
 			return pygame.Vector2(0, 0)
@@ -59,8 +59,8 @@ class Game_UI:
 			text_surface = self.m_font.render(current_weapon, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.bottomleft = (padding, self.m_screen.get_window().get_height() - padding - healthRectSize.y)
-			self.m_screen.get_window().blit(text_surface, text_rect)
+			text_rect.bottomleft = (padding, self.m_screen.m_window.get_height() - padding - healthRectSize.y)
+			self.m_screen.m_window.blit(text_surface, text_rect)
 
 	def write_score(self, score: int):
 		if self.m_font:
@@ -68,8 +68,8 @@ class Game_UI:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.center = (self.m_screen.get_window().get_width() / 2, padding + text_rect.height / 2)
-			self.m_screen.get_window().blit(text_surface, text_rect)
+			text_rect.center = (self.m_screen.m_window.get_width() / 2, padding + text_rect.height / 2)
+			self.m_screen.m_window.blit(text_surface, text_rect)
 
 	def update_FPS(self):
 		current_time: float = self.m_timer_handler.get_total_duration_ms()
@@ -84,4 +84,4 @@ class Game_UI:
 			text_rect = text_surface.get_rect()
 			padding = 10
 			text_rect.topleft = (padding, padding)
-			self.m_screen.get_window().blit(text_surface, text_rect)
+			self.m_screen.m_window.blit(text_surface, text_rect)

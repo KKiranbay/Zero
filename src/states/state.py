@@ -6,7 +6,6 @@ from screen import Screen
 class State:
 	def __init__(self):
 		self.done: bool = False
-		self.quit: bool = False
 
 		self.next_state: StatesEnum
 		self.previous_state: StatesEnum

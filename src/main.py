@@ -47,6 +47,9 @@ class GameController:
 
 		self.state.check_events()
 
+		if self.game_events.get_event(events_dictionary.EXIT_GAME_EVENT) == True:
+			self.quit = True
+
 	def update(self):
 		if self.state.done:
 			self.change_state()

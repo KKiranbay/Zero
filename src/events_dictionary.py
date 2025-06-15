@@ -8,7 +8,9 @@ def generateEventId():
 	event_id += 1
 	return event_id
 
-RESTART_EVENT: int		=	generateEventId()
+EXIT_GAME_EVENT: int	=	generateEventId()
+RESTART_GAME_EVENT: int	=	generateEventId()
+
 SPAWN_NPC_EVENT: int	=	generateEventId()
 CHAR_NO_DIED_EVENT: int	=	generateEventId()
 
@@ -28,9 +30,11 @@ class EventsDictionary:
 
 		self.m_events[pygame.KEYDOWN] = None
 
+		self.m_events[EXIT_GAME_EVENT] = False
+		self.m_events[RESTART_GAME_EVENT] = False
+
 		self.m_events[SPAWN_NPC_EVENT] = False
 		self.m_events[CHAR_NO_DIED_EVENT] = []
-		self.m_events[RESTART_EVENT] = False
 
 	def change_event(self, event: int, value):
 		self.m_events[event] = value
