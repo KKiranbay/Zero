@@ -11,6 +11,9 @@ import game.spawner as spawner
 
 from time_handler import Time_Handler
 
+from resources.shape_png_factory import create_triangle_png
+import resources.colors as colors
+
 class Game:
 	def __init__(self):
 		self.m_time_handler: Time_Handler = Time_Handler()
@@ -23,6 +26,8 @@ class Game:
 		self.m_playground: Playground
 
 		self.m_score: int = 0
+
+		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE);
 
 	def update(self):
 		dt_s: float = self.m_time_handler.get_delta_time_s()
