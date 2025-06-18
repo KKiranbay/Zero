@@ -11,7 +11,7 @@ class ChainDeployer(Weapon):
 			  attack_rpm: float,
 			  direction: Vector2,
 			  color: tuple[int, int, int]) -> None:
-		super().__init__("Chain Deployer", pos, size, attack_rpm, direction, color)
+		super().__init__("Chain", pos, size, attack_rpm, direction, color)
 
 	def create_projectile(self, game: Game):
 		mine: GrowingBarbedChain = GrowingBarbedChain(self.m_direction, self.m_pos, Vector2(30, 10))

@@ -11,7 +11,7 @@ class MineDeployer(Weapon):
 			  attack_rpm: float,
 			  direction: Vector2,
 			  color: tuple[int, int, int]) -> None:
-		super().__init__("Mine Deployer", pos, size, attack_rpm, direction, color)
+		super().__init__("Mine", pos, size, attack_rpm, direction, color)
 
 	def create_projectile(self, game: Game):
 		mine: Mine = Mine(self.m_pos, Vector2(50, 50))

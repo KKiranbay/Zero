@@ -63,4 +63,4 @@ class GameState(State):
 	def draw(self):
 		self.screen.reset_window_fill()
 		self.m_game.draw()
-		self.m_game_ui.update(self.m_player.m_health, self.m_player.m_current_weapon_str, self.m_game.m_score)
+		self.m_game_ui.update(self.m_player, self.m_game.m_score)

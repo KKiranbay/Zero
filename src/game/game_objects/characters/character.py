@@ -73,6 +73,8 @@ class Character(Playground_Object):
 		self.update_equipped_pos_direction()
 
 		self.rifle.update(dt_s, game)
+		self.mine_deployer.update(dt_s, game)
+		self.chain_deployer.update(dt_s, game)
 
 		keys = pygame.key.get_pressed()
 

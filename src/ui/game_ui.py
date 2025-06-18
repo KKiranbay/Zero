@@ -1,9 +1,12 @@
 import pygame
 
+from game.game_objects.characters.character import Character
+
 import resources.colors as colors
 
-from time_handler import Time_Handler
 from screen import Screen
+from time_handler import Time_Handler
+
 
 class Game_UI:
 	def __init__(self):
@@ -16,29 +19,33 @@ class Game_UI:
 		self.m_FPS_UPDATE_INTERVAL: float = 0.5
 
 		self.m_font: pygame.font.Font | None = None
+		self.m_default_font_size: int = 48
 		self.set_font()
 
 	def set_font(self):
 		try:
-			self.m_font = pygame.font.Font(None, 48)
+			self.m_font = pygame.font.Font(None, self.m_default_font_size)
 		except pygame.error:
 			print("Default font not found, trying a system font.")
 			font_name = pygame.font.match_font('dejavusans', bold=True) or \
 						pygame.font.match_font('arial', bold=True) or \
 						pygame.font.match_font('sans', bold=True)
 			if font_name:
-				self.m_font = pygame.font.Font(font_name, 48)
+				self.m_font = pygame.font.Font(font_name, self.m_default_font_size)
 			else:
 				print("No suitable font found! Text rendering might fail.")
 				self.m_font = None
 
-	def update(self, health: int, current_weapon: str, score: int):
+	def update(self, player: Character, score: int):
 		self.update_FPS()
 
 		self.write_FPS(self.m_fps_str)
 
-		healthRectSize: pygame.Vector2 = self.write_health(health)
-		self.write_current_weapon(healthRectSize, current_weapon)
+		healthRectTopLeft: pygame.Vector2 = self.write_health(player.m_health)
+
+		currentWeaponRectTopLeft: pygame.Vector2 = self.write_current_weapon(healthRectTopLeft, player.m_current_weapon_str)
+		cdMineDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(currentWeaponRectTopLeft, player.mine_deployer.m_weapon_name, 1, player.mine_deployer.m_current_cooldown_s)
+		cdChainDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(cdMineDeployerRectTopLeft, player.chain_deployer.m_weapon_name, 2, player.chain_deployer.m_current_cooldown_s)
 
 		self.write_score(score)
 
@@ -50,17 +57,49 @@ class Game_UI:
 			padding = 10
 			text_rect.bottomleft = (padding, self.m_screen.m_window.get_height() - padding)
 			self.m_screen.m_window.blit(text_surface, text_rect)
-			return pygame.Vector2(text_rect.size)
+			return pygame.Vector2(text_rect.topleft)
 		else:
 			return pygame.Vector2(0, 0)
 
-	def write_current_weapon(self, healthRectSize: pygame.Vector2, current_weapon: str):
+	def write_weapon_cooldown_s(self, bottom_left: pygame.Vector2, current_weapon: str, index: int, cooldown: float)-> pygame.Vector2:
 		if self.m_font:
+			self.m_font.set_point_size(self.m_default_font_size // 2)
+
+			formatted_name = f"{current_weapon[:10]:<10}"
+
+			cd: str
+			if cooldown == 0:
+				cd = f"{'READY':>5}"
+			else:
+				cd = f"{cooldown:5.2f}"
+
+			text: str = f"{formatted_name} | {cd}"
+			text_surface = self.m_font.render(text, True, colors.WHITE)
+			text_rect = text_surface.get_rect()
+			padding = 10
+			text_rect.bottomleft = (padding, bottom_left.y)
+			self.m_screen.m_window.blit(text_surface, text_rect)
+
+			self.m_font.set_point_size(self.m_default_font_size)
+
+			return pygame.Vector2(text_rect.topleft)
+		else:
+			return pygame.Vector2(0, 0)
+
+	def write_current_weapon(self, bottom_left: pygame.Vector2, current_weapon: str)-> pygame.Vector2:
+		if self.m_font:
+			self.m_font.set_point_size(self.m_default_font_size // 2)
+
 			text_surface = self.m_font.render(current_weapon, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
 			padding = 10
-			text_rect.bottomleft = (padding, self.m_screen.m_window.get_height() - padding - healthRectSize.y)
+			text_rect.bottomleft = (padding, bottom_left.y)
 			self.m_screen.m_window.blit(text_surface, text_rect)
+
+			self.m_font.set_point_size(self.m_default_font_size)
+			return pygame.Vector2(text_rect.topleft)
+		else:
+			return pygame.Vector2(0, 0)
 
 	def write_score(self, score: int):
 		if self.m_font:

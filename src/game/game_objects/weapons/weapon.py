@@ -36,26 +36,30 @@ class Weapon(Playground_Object):
 		self.m_last_attack_time_ms: float = 0
 
 		self.m_attack_rpm: float = attack_rpm
-		self.m_attack_cooldown_ms: float = (60.0 / self.m_attack_rpm) * 1000.0 # ms
+		self.m_attack_cooldown_ms: float = (60.0 / self.m_attack_rpm) * 1000.0
+
+		self.m_current_cooldown_s: float = 0
 
 		self.m_parent = parent
 		self.m_attach_to_parent = attach_to_parent
 
 	def update(self, dt_s: float, game: Game):
+		self.m_total_duration_ms = game.m_time_handler.get_total_duration_ms()
+		time_since_last_attack_ms = self.m_total_duration_ms - self.m_last_attack_time_ms
+		remaining_cooldown_ms = self.m_attack_cooldown_ms - time_since_last_attack_ms
+		self.m_current_cooldown_s = max(0, remaining_cooldown_ms * 0.001)
+
 		if self.m_attach_to_parent and self.m_parent != None:
 			self.m_pos = self.m_parent.get_attach_anchor_pos()
 			self.m_direction = self.m_parent.m_look_direction
-			pass
 
 	def update_attack_rpm(self, new_rpm: float):
 		self.m_attack_rpm = new_rpm
 		self.m_attack_cooldown_ms = (60.0 / self.m_attack_rpm) * 1000.0
 
 	def attack(self, game: Game):
-		self.m_total_duration = game.m_time_handler.get_total_duration_ms()
-
-		if (self.m_total_duration - self.m_last_attack_time_ms) >= self.m_attack_cooldown_ms:
-			self.m_last_attack_time_ms = self.m_total_duration
+		if self.m_current_cooldown_s == 0:
+			self.m_last_attack_time_ms = self.m_total_duration_ms
 			self.create_projectile(game)
 
 	def create_projectile(self, game: Game):
