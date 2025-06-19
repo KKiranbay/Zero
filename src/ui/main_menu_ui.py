@@ -8,13 +8,13 @@ import resources.colors as colors
 class Main_Menu_UI:
 	def __init__(self) -> None:
 		try:
-			self.m_menu_font = pygame.font.SysFont("Segoe UI", 50)
+			self.m_menu_font = pygame.font.SysFont("Consolas", 50)
 		except pygame.error:
 			self.m_menu_font = pygame.font.Font(None, 50)
 
 		self.m_screen: Screen = Screen()
-		self.m_button_width = 250
-		self.m_button_height = 70
+		self.m_button_width = 300
+		self.m_button_height = 100
 		self.m_center_x = (self.m_screen.m_window.get_width() - self.m_button_width) // 2
 
 		self.m_start_button: Button = Button(
@@ -28,7 +28,7 @@ class Main_Menu_UI:
 		)
 
 		self.m_exit_button: Button = Button(
-			x=self.m_center_x, y=300,
+			x=self.m_center_x, y=330,
 			width=self.m_button_width, height=self.m_button_height,
 			text="Exit",
 			base_color=colors.DARK_NAVY,

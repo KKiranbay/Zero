@@ -24,7 +24,7 @@ class Game_UI:
 
 	def set_font(self):
 		try:
-			self.m_font = pygame.font.Font(None, self.m_default_font_size)
+			self.m_font = pygame.font.SysFont("Consolas", self.m_default_font_size) # Has to be monospace
 		except pygame.error:
 			print("Default font not found, trying a system font.")
 			font_name = pygame.font.match_font('dejavusans', bold=True) or \
@@ -34,7 +34,7 @@ class Game_UI:
 				self.m_font = pygame.font.Font(font_name, self.m_default_font_size)
 			else:
 				print("No suitable font found! Text rendering might fail.")
-				self.m_font = None
+				self.m_font = pygame.font.SysFont(None, self.m_default_font_size)
 
 	def update(self, player: Character, score: int):
 		self.update_FPS()

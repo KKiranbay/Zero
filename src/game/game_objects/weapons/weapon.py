@@ -7,6 +7,8 @@ from game.game import Game
 
 from game.game_objects.playground_object import Playground_Object
 
+from time_handler import Time_Handler
+
 
 class Weapon(Playground_Object):
 	def __init__(self, name: str,
@@ -17,6 +19,8 @@ class Weapon(Playground_Object):
 			  parent: Playground_Object | None = None,
 			  attach_to_parent: bool = False) -> None:
 		super().__init__(pos, size)
+
+		self.m_time_handler: Time_Handler = Time_Handler()
 
 		self.m_weapon_name: str = name
 
@@ -32,8 +36,8 @@ class Weapon(Playground_Object):
 		self.rect = self.image.get_rect(center=self.m_pos)
 		self.mask = pygame.mask.from_surface(self.image)
 
-		self.m_total_duration_ms: float = 0
-		self.m_last_attack_time_ms: float = 0
+		self.m_total_duration_ms: float = self.m_time_handler.get_total_duration_ms()
+		self.m_last_attack_time_ms: float = -100_000_000
 
 		self.m_attack_rpm: float = attack_rpm
 		self.m_attack_cooldown_ms: float = (60.0 / self.m_attack_rpm) * 1000.0
@@ -44,7 +48,7 @@ class Weapon(Playground_Object):
 		self.m_attach_to_parent = attach_to_parent
 
 	def update(self, dt_s: float, game: Game):
-		self.m_total_duration_ms = game.m_time_handler.get_total_duration_ms()
+		self.m_total_duration_ms = self.m_time_handler.get_total_duration_ms()
 		time_since_last_attack_ms = self.m_total_duration_ms - self.m_last_attack_time_ms
 		remaining_cooldown_ms = self.m_attack_cooldown_ms - time_since_last_attack_ms
 		self.m_current_cooldown_s = max(0, remaining_cooldown_ms * 0.001)
