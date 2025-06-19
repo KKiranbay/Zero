@@ -36,13 +36,13 @@ class Weapon(Playground_Object):
 		self.rect = self.image.get_rect(center=self.m_pos)
 		self.mask = pygame.mask.from_surface(self.image)
 
-		self.m_total_duration_ms: float = self.m_time_handler.get_total_duration_ms()
-		self.m_last_attack_time_ms: float = -100_000_000
-
 		self.m_attack_rpm: float = attack_rpm
 		self.m_attack_cooldown_ms: float = (60.0 / self.m_attack_rpm) * 1000.0
 
 		self.m_current_cooldown_s: float = 0
+
+		self.m_total_duration_ms: float = self.m_time_handler.get_total_duration_ms()
+		self.m_last_attack_time_ms: float = self.m_total_duration_ms - self.m_attack_cooldown_ms
 
 		self.m_parent = parent
 		self.m_attach_to_parent = attach_to_parent

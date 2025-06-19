@@ -44,8 +44,8 @@ class Game_UI:
 		healthRectTopLeft: pygame.Vector2 = self.write_health(player.m_health)
 
 		currentWeaponRectTopLeft: pygame.Vector2 = self.write_current_weapon(healthRectTopLeft, player.m_current_weapon_str)
-		cdMineDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(currentWeaponRectTopLeft, player.mine_deployer.m_weapon_name, 1, player.mine_deployer.m_current_cooldown_s)
-		cdChainDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(cdMineDeployerRectTopLeft, player.chain_deployer.m_weapon_name, 2, player.chain_deployer.m_current_cooldown_s)
+		cdMineDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(currentWeaponRectTopLeft, player.mine_deployer.m_weapon_name, 1, player.mine_deployer.m_current_cooldown_s, "E")
+		cdChainDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(cdMineDeployerRectTopLeft, player.chain_deployer.m_weapon_name, 2, player.chain_deployer.m_current_cooldown_s, "R")
 
 		self.write_score(score)
 
@@ -61,11 +61,12 @@ class Game_UI:
 		else:
 			return pygame.Vector2(0, 0)
 
-	def write_weapon_cooldown_s(self, bottom_left: pygame.Vector2, current_weapon: str, index: int, cooldown: float)-> pygame.Vector2:
+	def write_weapon_cooldown_s(self, bottom_left: pygame.Vector2, current_weapon: str, index: int, cooldown: float, button: str)-> pygame.Vector2:
 		if self.m_font:
 			self.m_font.set_point_size(self.m_default_font_size // 2)
 
-			formatted_name = f"{current_weapon[:10]:<10}"
+			formatted_name = "(" + button + ") " + current_weapon
+			formatted_name = f"{formatted_name[:10]:<10}"
 
 			cd: str
 			if cooldown == 0:

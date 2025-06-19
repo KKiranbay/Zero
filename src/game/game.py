@@ -129,4 +129,4 @@ class Game:
 			return
 
 		if isinstance(chars_died[0], int) and chars_died[0] == 1:
-			self.m_game_events.change_event(events_dictionary.RESTART_EVENT, True)
+			self.m_game_events.change_event(events_dictionary.RESTART_GAME_EVENT, True)
