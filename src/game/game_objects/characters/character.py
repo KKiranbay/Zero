@@ -64,7 +64,7 @@ class Character(Playground_Object):
 
 		self.m_inventory: Inventory = Inventory()
 		self.m_inventory.add_main_equipped(rifle)
-		self.m_inventory.add_equipped_weapon(pygame.K_1, rifle)
+		self.m_inventory.add_equipped_weapon(pygame.MOUSEBUTTONDOWN, rifle)
 		self.m_inventory.add_equipped_weapon(pygame.K_e, mine_deployer)
 		self.m_inventory.add_equipped_weapon(pygame.K_r, chain_deployer)
 

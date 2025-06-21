@@ -23,7 +23,7 @@ class GameController:
 		self.MAX_HZ: int = 0
 		self.desired_framerate: float = 0
 
-		self.set_desired_hz(240)
+		self.set_desired_hz(10000)
 
 		self.quit: bool = False
 		self.states: dict[StatesEnum, State] = {

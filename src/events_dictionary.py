@@ -25,11 +25,13 @@ class EventsDictionary:
 		return event in self.m_events
 
 	def reset_events(self):
+		# pygame events
 		self.m_events[pygame.MOUSEBUTTONDOWN] = None
 		self.m_events[pygame.MOUSEBUTTONUP] = None
 
 		self.m_events[pygame.KEYDOWN] = None
 
+		# custom events
 		self.m_events[EXIT_GAME_EVENT] = False
 		self.m_events[RESTART_GAME_EVENT] = False
 
