@@ -2,8 +2,6 @@ import pygame
 
 import resources.colors as colors
 
-from game.game import Game
-
 from game.game_objects.playground_object import Playground_Object
 
 class Bullet(Playground_Object):
@@ -24,12 +22,12 @@ class Bullet(Playground_Object):
 		self.rect = self.image.get_rect(center=self.m_pos)
 		self.mask = pygame.mask.from_surface(self.image)
 
-	def update(self, dt_s: float, game: Game):
-		displacement = self.m_direction * self.m_speed * dt_s
+	def update(self):
+		displacement = self.m_direction * self.m_speed * self.m_time_handler.get_delta_time_s()
 		self.setDisplacement(displacement)
 
-		if self.check_fully_left_rect(game.m_playground.m_game_world_rect):
+		if self.check_fully_left_rect(self.m_game.m_playground.m_game_world_rect):
 			self.kill()
 
-	def on_collision_with_npcs(self, game, npcs_hit: set[pygame.sprite.Sprite]):
+	def on_collision_with_npcs(self, npcs_hit: set[pygame.sprite.Sprite]):
 		pass

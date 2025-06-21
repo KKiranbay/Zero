@@ -2,8 +2,6 @@ from enum import Enum
 
 import pygame
 
-import resources.colors as colors
-
 from game.game_objects.playground_object import Playground_Object
 
 class NPC_Type(Enum):
@@ -27,14 +25,15 @@ class NPC(Playground_Object):
 
 		self.mask = pygame.mask.from_surface(self.image)
 
-	def update(self, dt_s: float, game):
-		self.move_towards_closest_target(dt_s, game)
+	def update(self,):
+		self.move_towards_closest_target()
 
-	def move_towards_closest_target(self, dt_s: float, game):
+	def move_towards_closest_target(self):
 		closest_target: Playground_Object | None = None
 
 		min_distance: float = float('inf')
-		for target in game.m_chars:
+
+		for target in self.m_game.m_chars:
 			distance: float = self.m_pos.distance_to(target.m_pos)
 			if distance < min_distance:
 				min_distance = distance
@@ -43,7 +42,7 @@ class NPC(Playground_Object):
 		if closest_target:
 			self.m_move_direction = closest_target.m_pos - self.m_pos
 			if self.m_move_direction.length() > self.rect.width / 2.0:
-				self.m_move_direction = self.m_move_direction.normalize() * self.m_speed * dt_s
+				self.m_move_direction = self.m_move_direction.normalize() * self.m_speed * self.m_time_handler.get_delta_time_s()
 
 				self.update_look_direction()
 				self.update_draw_polygon_and_mask()
@@ -62,13 +61,13 @@ class NPC(Playground_Object):
 		self.mask = pygame.mask.from_surface(self.image)
 
 
-	def on_collision_with_projectile(self, game, collided_projectile):
+	def on_collision_with_projectile(self, collided_projectile):
 		self.m_health -= collided_projectile.m_damage
 		if self.m_health <= 0:
-			game.m_score += 1
+			self.m_game.m_score += 1
 			self.kill()
 
 		collided_projectile.kill()
 
-	def on_collision_with_char(self, game, char_hit: pygame.sprite.Sprite):
+	def on_collision_with_char(self, char_hit: pygame.sprite.Sprite):
 		pass

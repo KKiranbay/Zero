@@ -13,8 +13,6 @@ from ui.game_ui import Game_UI
 
 import resources.colors as colors
 
-from screen import Screen
-
 from states_enum import StatesEnum
 
 from states.state import State
@@ -30,6 +28,7 @@ class GameState(State):
 
 		# init
 		self.m_game: Game = Game()
+		self.m_game.reinitialize()
 
 		playground_width = 500
 		playground_height = 500
@@ -50,7 +49,7 @@ class GameState(State):
 		self.m_game_ui : Game_UI = Game_UI()
 
 	def check_events(self):
-		if self.events.get_event(pygame.KEYDOWN) == None:
+		if self.events.get_event(pygame.KEYDOWN) is None:
 			return
 
 		if self.events.get_event(pygame.KEYDOWN).key == pygame.K_ESCAPE:

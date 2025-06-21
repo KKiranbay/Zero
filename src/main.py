@@ -47,7 +47,7 @@ class GameController:
 
 		self.state.check_events()
 
-		if self.game_events.get_event(events_dictionary.EXIT_GAME_EVENT) == True:
+		if self.game_events.get_event(events_dictionary.EXIT_GAME_EVENT):
 			self.quit = True
 
 	def update(self):
@@ -88,11 +88,3 @@ if __name__ == "__main__":
 	app = GameController()
 	app.run()
 	pygame.quit()
-
-
-import resources.colors as colors
-from resources.shape_png_factory import create_triangle_png
-
-# Triangle PNG
-image_filename = "enemy_triangle.png"
-create_triangle_png(image_filename, (100, 100), colors.PURPLE)

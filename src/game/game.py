@@ -14,8 +14,16 @@ from time_handler import Time_Handler
 from resources.shape_png_factory import create_triangle_png
 import resources.colors as colors
 
+from singleton import singleton
+
+@singleton
 class Game:
 	def __init__(self):
+		self.reinitialize()
+
+		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE)
+
+	def reinitialize(self):
 		self.m_time_handler: Time_Handler = Time_Handler()
 
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
@@ -27,14 +35,10 @@ class Game:
 
 		self.m_score: int = 0
 
-		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE);
-
 	def update(self):
-		dt_s: float = self.m_time_handler.get_delta_time_s()
-
-		self.m_chars.update(dt_s, self)
-		self.m_npcs.update(dt_s, self)
-		self.m_projectiles.update(dt_s, self)
+		self.m_chars.update()
+		self.m_npcs.update()
+		self.m_projectiles.update()
 
 		self.check_collisions()
 
@@ -77,9 +81,9 @@ class Game:
 			if len(npcs_hit_forreal) == 0:
 				continue
 
-			projectile.on_collision_with_npcs(game=self, npcs_hit=npcs_hit_forreal)
+			projectile.on_collision_with_npcs(npcs_hit=npcs_hit_forreal)
 			for npc in npcs_hit:
-				npc.on_collision_with_projectile(game=self, collided_projectile=projectile)
+				npc.on_collision_with_projectile(collided_projectile=projectile)
 
 		char_npc_collisions = pygame.sprite.groupcollide(self.m_chars, self.m_npcs, False, False)
 		for char, npcs_hit in char_npc_collisions.items():
@@ -91,9 +95,9 @@ class Game:
 			if len(npcs_hit_forreal) == 0:
 				continue
 
-			char.on_collision_with_npcs(game=self, npcs_hit=npcs_hit_forreal)
+			char.on_collision_with_npcs(npcs_hit=npcs_hit_forreal)
 			for npc in npcs_hit:
-				npc.on_collision_with_char(game=self, char_hit=char)
+				npc.on_collision_with_char(char_hit=char)
 
 		for sprite in self.m_chars.sprites():
 			sprite.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
@@ -113,7 +117,7 @@ class Game:
 			return
 
 		npc = spawner.spawnNPC(self.m_playground, self.m_chars, 200, self.get_exponential_spawn_interval())
-		if (npc != None):
+		if (npc is not None):
 			self.add_npc_object(npc)
 
 	def get_exponential_spawn_interval(self) -> int:

@@ -1,7 +1,5 @@
 import pygame
 
-from screen import Screen
-
 class Playground:
 	def __init__(self, parent: pygame.Surface, width: int, height: int, color: tuple):
 		self.m_game_world_rect: pygame.Rect = pygame.Rect(0, 0, width, height)

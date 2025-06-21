@@ -2,10 +2,15 @@ import pygame
 
 import resources.colors as colors
 
-
 class Playground_Object(pygame.sprite.Sprite):
 	def __init__(self, pos: pygame.Vector2, size: pygame.Vector2) -> None:
 		super().__init__()
+
+		from game.game import Game
+		self.m_game: Game = Game()
+
+		from time_handler import Time_Handler
+		self.m_time_handler: Time_Handler = Time_Handler()
 
 		self.image: pygame.Surface = pygame.Surface((size.x, size.y), pygame.SRCALPHA)
 		self.image.fill(colors.WHITE)
@@ -24,7 +29,7 @@ class Playground_Object(pygame.sprite.Sprite):
 
 		self.m_attach_anchor_pos: pygame.math.Vector2 = self.m_pos
 
-	def update(self, dt_s: float, game):
+	def update(self):
 		pass
 
 	def update_center_depending_on_pos(self):

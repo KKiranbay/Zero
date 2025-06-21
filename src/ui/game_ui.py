@@ -43,9 +43,10 @@ class Game_UI:
 
 		healthRectTopLeft: pygame.Vector2 = self.write_health(player.m_health)
 
-		currentWeaponRectTopLeft: pygame.Vector2 = self.write_current_weapon(healthRectTopLeft, player.m_current_weapon_str)
-		cdMineDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(currentWeaponRectTopLeft, player.mine_deployer.m_weapon_name, 1, player.mine_deployer.m_current_cooldown_s, "E")
-		cdChainDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(cdMineDeployerRectTopLeft, player.chain_deployer.m_weapon_name, 2, player.chain_deployer.m_current_cooldown_s, "R")
+		lastRectTopLeft: pygame.Vector2 = healthRectTopLeft
+		for key, weapon in player.m_inventory.m_weapon_inventory.items():
+			cdMineDeployerRectTopLeft: pygame.Vector2 = self.write_weapon_cooldown_s(lastRectTopLeft, weapon.m_equippable_name, 1, weapon.m_current_cooldown_s, pygame.key.name(key))
+			lastRectTopLeft = cdMineDeployerRectTopLeft
 
 		self.write_score(score)
 

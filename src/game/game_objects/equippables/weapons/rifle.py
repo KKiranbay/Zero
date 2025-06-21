@@ -1,10 +1,8 @@
 from pygame import Vector2
 
-from game.game import Game
-
 from game.game_objects.playground_object import Playground_Object
 
-from game.game_objects.weapons.weapon import Weapon
+from game.game_objects.equippables.weapons.weapon import Weapon
 
 from game.game_objects.projectiles.bullet import Bullet
 
@@ -18,6 +16,6 @@ class Rifle(Weapon):
 			  attach_to_parent: bool = False) -> None:
 		super().__init__("Rifle", pos, size, attack_rpm, direction, color, parent, attach_to_parent)
 
-	def create_projectile(self, game: Game):
+	def create_projectile(self):
 		bullet: Bullet = Bullet(self.m_direction, self.m_pos, Vector2(10, 10))
-		game.add_projectile_object(bullet)
+		self.m_game.add_projectile_object(bullet)

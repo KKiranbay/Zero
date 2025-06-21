@@ -2,8 +2,6 @@ import pygame
 
 import resources.colors as colors
 
-from game.game import Game
-
 from game.game_objects.playground_object import Playground_Object
 
 class GrowingBarbedChain(Playground_Object):
@@ -32,13 +30,13 @@ class GrowingBarbedChain(Playground_Object):
 
 		self.m_anchor_pos: pygame.Vector2 = pygame.Vector2(self.rect.midbottom)
 
-	def update(self, dt_s: float, game: Game):
+	def update(self):
 		if self.m_scaled_image.get_height() > self.m_height_limit:
 			return
 
 		player_mask_rect: pygame.Rect = self.mask.get_rect(center=self.rect.center)
-		if game.m_playground.m_game_world_rect.contains(player_mask_rect):
-			current_growth: float = self.m_growth_per_sec * dt_s
+		if self.m_game.m_playground.m_game_world_rect.contains(player_mask_rect):
+			current_growth: float = self.m_growth_per_sec * self.m_time_handler.get_delta_time_s()
 			self.m_growth += current_growth
 
 			new_pixel_height = self.m_original_height * self.m_growth
@@ -52,5 +50,5 @@ class GrowingBarbedChain(Playground_Object):
 			self.rect = self.image.get_rect(center=new_center)
 			self.mask = pygame.mask.from_surface(self.image)
 
-	def on_collision_with_npcs(self, game, npcs_hit: set[pygame.sprite.Sprite]):
+	def on_collision_with_npcs(self, npcs_hit: set[pygame.sprite.Sprite]):
 		pass
