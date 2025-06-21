@@ -30,11 +30,11 @@ class NPC(Playground_Object):
 
 	def move_towards_closest_target(self):
 		closest_target: Playground_Object | None = None
-
 		min_distance: float = float('inf')
-
-		for target in self.m_game.m_chars:
-			distance: float = self.m_pos.distance_to(target.m_pos)
+		chars = self.m_game.m_chars
+		my_pos = self.m_pos
+		for target in chars:
+			distance: float = my_pos.distance_to(target.m_pos)
 			if distance < min_distance:
 				min_distance = distance
 				closest_target = target

@@ -41,10 +41,11 @@ class Game:
 		self.m_projectiles.update()
 
 		self.check_collisions()
-
 		self.check_game_events()
 
-		self.m_camera.update(self.m_chars.sprites()[0].rect.center)
+		chars_sprites = self.m_chars.sprites()
+		if chars_sprites:
+			self.m_camera.update(chars_sprites[0].rect.center)
 
 	def add_playground(self, playground: Playground):
 		self.m_playground = playground
@@ -99,11 +100,14 @@ class Game:
 			for npc in npcs_hit:
 				npc.on_collision_with_char(char_hit=char)
 
-		for sprite in self.m_chars.sprites():
-			sprite.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
+		chars_sprites = self.m_chars.sprites()
+		npcs_sprites = self.m_npcs.sprites()
+		game_world_rect = self.m_playground.m_game_world_rect
+		for sprite in chars_sprites:
+			sprite.check_and_clamp_ip_with_rect(game_world_rect)
 
-		for sprite in self.m_npcs.sprites():
-			sprite.check_and_clamp_ip_with_rect(self.m_playground.m_game_world_rect)
+		for sprite in npcs_sprites:
+			sprite.check_and_clamp_ip_with_rect(game_world_rect)
 
 	def get_screen_offset(self) -> pygame.math.Vector2:
 		return self.m_camera.m_screen_offset
@@ -125,7 +129,7 @@ class Game:
 		DECAY_RATE: float = 0.01
 		MIN_SPAWN_INTERVAL_MS: int = 200
 		game_duration_seconds = self.m_time_handler.get_total_duration_ms() / 1000.0
-		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds) + 200
+		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds)
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
 
 	def check_chars_died_event(self, chars_died: list[int]):

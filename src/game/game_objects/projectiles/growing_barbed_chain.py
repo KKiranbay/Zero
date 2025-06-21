@@ -35,7 +35,8 @@ class GrowingBarbedChain(Playground_Object):
 			return
 
 		player_mask_rect: pygame.Rect = self.mask.get_rect(center=self.rect.center)
-		if self.m_game.m_playground.m_game_world_rect.contains(player_mask_rect):
+		game_world_rect = self.m_game.m_playground.m_game_world_rect
+		if game_world_rect.contains(player_mask_rect):
 			current_growth: float = self.m_growth_per_sec * self.m_time_handler.get_delta_time_s()
 			self.m_growth += current_growth
 
