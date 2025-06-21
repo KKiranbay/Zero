@@ -112,13 +112,22 @@ class Game_UI:
 		return pygame.Vector2(blit_rect.topleft)
 
 	def write_score(self, score: int):
-		if self.m_font:
-			text: str = f"Score: {score}"
+		if not self.m_font:
+			return
+
+		text: str = f"Score: {score}"
+
+		if text not in self.m_cached_text_surfaces:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
-			padding = 10
-			text_rect.center = (self.m_screen.m_window.get_width() / 2, padding + text_rect.height / 2)
-			self.m_screen.m_window.blit(text_surface, text_rect)
+			self.m_cached_text_surfaces[text] = (text_surface, text_rect)
+		else:
+			text_surface, text_rect = self.m_cached_text_surfaces[text]
+
+		padding = 10
+		blit_rect = text_rect.copy()
+		blit_rect.center = (self.m_screen.m_window.get_width() / 2, padding + text_rect.height / 2)
+		self.m_screen.m_window.blit(text_surface, blit_rect)
 
 	def update_FPS(self):
 		current_time: float = self.m_timer_handler.get_total_duration_ms()
@@ -128,9 +137,17 @@ class Game_UI:
 			self.m_fps_start_timer = current_time
 
 	def write_FPS(self, text: str):
-		if self.m_font:
+		if not self.m_font:
+			return
+
+		if text not in self.m_cached_text_surfaces:
 			text_surface = self.m_font.render(text, True, colors.WHITE)
 			text_rect = text_surface.get_rect()
-			padding = 10
-			text_rect.topleft = (padding, padding)
-			self.m_screen.m_window.blit(text_surface, text_rect)
+			self.m_cached_text_surfaces[text] = (text_surface, text_rect)
+		else:
+			text_surface, text_rect = self.m_cached_text_surfaces[text]
+
+		padding = 10
+		blit_rect = text_rect.copy()
+		blit_rect.topleft = (padding, padding)
+		self.m_screen.m_window.blit(text_surface, blit_rect)

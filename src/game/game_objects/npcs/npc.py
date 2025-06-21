@@ -60,7 +60,6 @@ class NPC(Playground_Object):
 		self.rect = self.image.get_rect(center=self.rect.center)
 		self.mask = pygame.mask.from_surface(self.image)
 
-
 	def on_collision_with_projectile(self, collided_projectile):
 		self.m_health -= collided_projectile.m_damage
 		if self.m_health <= 0:
