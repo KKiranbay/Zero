@@ -22,6 +22,7 @@ class GameState(State):
 	def __init__(self):
 		super().__init__()
 		self.next_state = StatesEnum.MAIN_MENU
+
 	def startup(self, persistent):
 		self.persist = persistent
 
@@ -54,14 +55,18 @@ class GameState(State):
 	def check_events(self):
 		if self.events.get_event(pygame.KEYDOWN) is None:
 			return
-
 		if self.events.get_event(pygame.KEYDOWN).key == pygame.K_ESCAPE:
 			self.done = True
 
 	def update(self):
 		if self.m_game.m_game_events.get_event(events_dictionary.RESTART_GAME_EVENT):
 			self.m_game.m_game_events.clear_persistent_event(events_dictionary.RESTART_GAME_EVENT)
-			self.initialize_game_objects()
+			self.persist = {
+				'game_data': self.m_game,
+			}
+			self.next_state = StatesEnum.GAME_OVER
+			self.done = True
+			return
 
 		self.m_game.update()
 

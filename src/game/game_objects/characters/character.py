@@ -171,7 +171,6 @@ class Character(Playground_Object):
 			chars_died = self.m_game.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT)
 			chars_died.append(self.m_player_id)
 			self.m_game.m_game_events.change_event(events_dictionary.CHAR_NO_DIED_EVENT, chars_died)
-			print("Dead!")
 
 	def change_current_weapon(self, weapon_index: int):
 		self.m_current_weapon = weapon_index

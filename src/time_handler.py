@@ -37,7 +37,7 @@ class Time_Handler:
 
 		self.m_delta_time_ns = self.m_frame_start_time_ns - self.m_last_time_ns
 		self.m_delta_time_ms = self.m_delta_time_ns / 1_000_000.0
-		self.m_delta_time_s = self.m_delta_time_ms / 1000.0
+		self.m_delta_time_s = self.m_delta_time_ms / 1_000.0
 		self.m_total_duration_ms += self.m_delta_time_ms
 
 		self.m_fps += 1

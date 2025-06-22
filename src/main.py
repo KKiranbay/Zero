@@ -9,6 +9,7 @@ from states_enum import StatesEnum
 from states.state import State
 from states.game_state import GameState
 from states.main_menu_state import MainMenuState
+from states.game_over_state import GameOverState
 
 from time_handler import Time_Handler
 
@@ -24,11 +25,11 @@ class GameController:
 		self.desired_framerate: float = 0
 
 		self.set_desired_hz(10000)
-
 		self.quit: bool = False
 		self.states: dict[StatesEnum, State] = {
 			StatesEnum.MAIN_MENU:	MainMenuState(),
-			StatesEnum.GAME_STATE:	GameState()
+			StatesEnum.GAME_STATE:	GameState(),
+			StatesEnum.GAME_OVER:	GameOverState()
 		}
 
 		self.current_state: StatesEnum = StatesEnum.MAIN_MENU
