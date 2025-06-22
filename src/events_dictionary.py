@@ -31,15 +31,26 @@ class EventsDictionary:
 
 		self.m_events[pygame.KEYDOWN] = None
 
-		# custom events
+		# custom events - only reset if not active
 		self.m_events[EXIT_GAME_EVENT] = False
-		self.m_events[RESTART_GAME_EVENT] = False
+
+		if not self.m_events.get(RESTART_GAME_EVENT, False):
+			self.m_events[RESTART_GAME_EVENT] = False
 
 		self.m_events[SPAWN_NPC_EVENT] = False
-		self.m_events[CHAR_NO_DIED_EVENT] = []
+
+		if not self.m_events.get(CHAR_NO_DIED_EVENT, []):
+			self.m_events[CHAR_NO_DIED_EVENT] = []
 
 	def change_event(self, event: int, value):
 		self.m_events[event] = value
 
 	def get_event(self, event: int):
 		return self.m_events[event]
+
+	def clear_persistent_event(self, event: int):
+		"""Explicitly clear a persistent event after it has been processed"""
+		if event == RESTART_GAME_EVENT:
+			self.m_events[event] = False
+		elif event == CHAR_NO_DIED_EVENT:
+			self.m_events[event] = []

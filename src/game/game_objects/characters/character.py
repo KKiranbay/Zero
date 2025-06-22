@@ -21,6 +21,8 @@ class Character(Playground_Object):
 	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
 		super().__init__(char_pos, char_size)
 
+		self.m_player_id: int = 1
+
 		self.m_health: int = 30
 		self.m_char_speed: float = char_speed
 		self.m_color: tuple[int, int, int] = colors.DARK_GREEN
@@ -166,8 +168,8 @@ class Character(Playground_Object):
 	def damaged(self):
 		self.m_health -= 1
 		if (self.m_health == 0):
-			chars_died: list[int] = self.m_game.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT)
-			chars_died.append(1)
+			chars_died = self.m_game.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT)
+			chars_died.append(self.m_player_id)
 			self.m_game.m_game_events.change_event(events_dictionary.CHAR_NO_DIED_EVENT, chars_died)
 			print("Dead!")
 

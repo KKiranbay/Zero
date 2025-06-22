@@ -19,19 +19,21 @@ from singleton import singleton
 @singleton
 class Game:
 	def __init__(self):
+		self.m_time_handler: Time_Handler = Time_Handler()
+		self.m_game_events: EventsDictionary = EventsDictionary()
+
+		self.m_playground: Playground
+
 		self.reinitialize()
 
 		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE)
 
 	def reinitialize(self):
-		self.m_time_handler: Time_Handler = Time_Handler()
+		self.m_time_handler.reset_total_duration()
 
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_projectiles: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_npcs: pygame.sprite.Group = pygame.sprite.Group()
-
-		self.m_game_events: EventsDictionary = EventsDictionary()
-		self.m_playground: Playground
 
 		self.m_score: int = 0
 
@@ -132,9 +134,10 @@ class Game:
 		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds)
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
 
-	def check_chars_died_event(self, chars_died: list[int]):
+	def check_chars_died_event(self, chars_died):
 		if not chars_died:
 			return
 
-		if isinstance(chars_died[0], int) and chars_died[0] == 1:
+		if chars_died[0] == 1:
 			self.m_game_events.change_event(events_dictionary.RESTART_GAME_EVENT, True)
+			self.m_game_events.clear_persistent_event(events_dictionary.CHAR_NO_DIED_EVENT)

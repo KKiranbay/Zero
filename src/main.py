@@ -72,9 +72,9 @@ class GameController:
 	def run(self):
 		while not self.quit:
 			self.time_handler.tick(self.desired_framerate)
+			self.game_events.reset_events()
 			self.event_loop()
 			self.update()
-			self.game_events.reset_events()
 			self.draw()
 
 	def set_desired_hz(self, hz: int):

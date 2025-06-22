@@ -22,12 +22,15 @@ class GameState(State):
 	def __init__(self):
 		super().__init__()
 		self.next_state = StatesEnum.MAIN_MENU
-
 	def startup(self, persistent):
 		self.persist = persistent
 
 		# init
 		self.m_game: Game = Game()
+
+		self.initialize_game_objects()
+
+	def initialize_game_objects(self):
 		self.m_game.reinitialize()
 
 		playground_width = 500
@@ -56,8 +59,11 @@ class GameState(State):
 			self.done = True
 
 	def update(self):
+		if self.m_game.m_game_events.get_event(events_dictionary.RESTART_GAME_EVENT):
+			self.m_game.m_game_events.clear_persistent_event(events_dictionary.RESTART_GAME_EVENT)
+			self.initialize_game_objects()
+
 		self.m_game.update()
-		pass
 
 	def draw(self):
 		self.screen.reset_window_fill()
