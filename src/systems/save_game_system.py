@@ -35,7 +35,9 @@ class SaveGameSystem(GameDataSystem):
 	def serialize_game(self, game):
 		return {
 			"score": game.m_score,
-			"total_duration_ms": game.m_time_handler.get_total_duration_ms()
+			"total_duration_ms": game.m_time_handler.get_total_duration_ms(),
+			"next_spawn_total_time_ms": game.m_next_spawn_total_time_ms,
+			"spawn_system_active": game.m_spawn_system_active
 		}
 
 	def serialize_player(self, player):

@@ -24,11 +24,11 @@ class Game:
 
 		self.m_playground: Playground
 
-		self.reinitialize()
+		self.initialize()
 
 		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE)
 
-	def reinitialize(self):
+	def initialize(self):
 		self.m_time_handler.reset_total_duration()
 
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
@@ -36,6 +36,24 @@ class Game:
 		self.m_npcs: pygame.sprite.Group = pygame.sprite.Group()
 
 		self.m_score: int = 0
+
+		self.m_next_spawn_total_time_ms: float = 0
+		self.m_spawn_system_active: bool = False
+
+	def reinitialize(self):
+		self.m_time_handler.reset_total_duration()
+
+		self.m_chars.empty()
+		self.m_projectiles.empty()
+		self.m_npcs.empty()
+
+		self.m_score = 0
+		self.m_next_spawn_total_time_ms = 0
+		self.m_spawn_system_active = False
+
+	def start_spawn_system(self):
+		self.m_spawn_system_active = True
+		self.m_next_spawn_total_time_ms = self.m_time_handler.get_total_duration_ms() + 2500
 
 	def update(self):
 		self.m_chars.update()
@@ -116,15 +134,28 @@ class Game:
 
 	def check_game_events(self):
 		self.check_spawn_event(self.m_game_events.get_event(events_dictionary.SPAWN_NPC_EVENT))
-		self.check_chars_died_event(self.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT))
+
+		chars_died = self.m_game_events.get_event(events_dictionary.CHAR_NO_DIED_EVENT)
+		if chars_died:
+			self.chars_died_event(chars_died)
 
 	def check_spawn_event(self, spawn: bool):
-		if not spawn:
+		should_spawn = spawn
+
+		if self.m_spawn_system_active:
+			current_time = self.m_time_handler.get_total_duration_ms()
+			if current_time >= self.m_next_spawn_total_time_ms:
+				should_spawn = True
+
+		if not should_spawn:
 			return
 
-		npc = spawner.spawnNPC(self.m_playground, self.m_chars, 200, self.get_exponential_spawn_interval())
-		if (npc is not None):
-			self.add_npc_object(npc)
+		exp_time_ms = self.get_exponential_spawn_interval()
+		npc_time_tuple = spawner.spawn_npc(self.m_playground, self.m_chars, 200, exp_time_ms)
+		if npc_time_tuple[0] is not None:
+			self.add_npc_object(npc_time_tuple[0])
+
+		self.m_next_spawn_total_time_ms = self.m_time_handler.get_total_duration_ms() + npc_time_tuple[1]
 
 	def get_exponential_spawn_interval(self) -> int:
 		BASE_SPAWN_INTERVAL_MS: int = 3000
@@ -134,10 +165,7 @@ class Game:
 		raw_interval = BASE_SPAWN_INTERVAL_MS * math.exp(-DECAY_RATE * game_duration_seconds)
 		return int(max(MIN_SPAWN_INTERVAL_MS, raw_interval))
 
-	def check_chars_died_event(self, chars_died):
-		if not chars_died:
-			return
-
+	def chars_died_event(self, chars_died):
 		if chars_died[0] == 1:
 			self.m_game_events.change_event(events_dictionary.RESTART_GAME_EVENT, True)
 			self.m_game_events.clear_persistent_event(events_dictionary.CHAR_NO_DIED_EVENT)

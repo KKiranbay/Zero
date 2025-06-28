@@ -4,6 +4,7 @@ import os
 import pygame
 from pygame import Vector2
 
+from game.game import Game
 from game.camera import Camera
 from game.playground import Playground
 
@@ -23,6 +24,7 @@ class LoadGameSystem(GameDataSystem):
 	def __init__(self):
 		super().__init__()
 		self.screen: Screen = Screen()
+		self.m_game: Game = Game()
 
 	def load_game_data(self):
 		try:
@@ -39,42 +41,44 @@ class LoadGameSystem(GameDataSystem):
 			return save_data
 
 		except Exception as e:
-			print(f"Failed to load game: {e}")
+			print(f"Failed to load self.m_game: {e}")
 			return None
 
-	def restore_game_state(self, save_data, game):
+	def restore_game_state(self, save_data) -> bool:
 		try:
-			game.reinitialize()
+			self.m_game.reinitialize()
 
 			game_data = save_data["game"]
-			game.m_score = game_data["score"]
-			game.m_time_handler.m_total_duration_ms = game_data["total_duration_ms"]
+			self.m_game.m_score = game_data["score"]
+			self.m_game.m_time_handler.m_total_duration_ms = game_data["total_duration_ms"]
+			self.m_game.m_next_spawn_total_time_ms = game_data["next_spawn_total_time_ms"]
+			self.m_game.m_spawn_system_active = game_data["spawn_system_active"]
 
-			self.restore_playground(game)
+			self.restore_playground()
 
-			self.restore_player(save_data["player"], game)
+			self.restore_player(save_data["player"])
 
-			game.m_npcs.empty()
-			game.m_projectiles.empty()
+			self.m_game.m_npcs.empty()
+			self.m_game.m_projectiles.empty()
 
-			self.restore_npcs(save_data["npcs"], game)
+			self.restore_npcs(save_data["npcs"])
 
-			self.restore_projectiles(save_data["projectiles"], game)
+			self.restore_projectiles(save_data["projectiles"])
 
 			print("Game state restored successfully")
 			return True
 
 		except Exception as e:
-			print(f"Failed to restore game state: {e}")
+			print(f"Failed to restore self.m_game state: {e}")
 			return False
 
-	def restore_playground(self, game):
+	def restore_playground(self):
 		playground_width = 500
 		playground_height = 500
 		playground = Playground(self.screen.m_window, playground_width, playground_height, colors.BEIGE)
-		game.add_playground(playground)
+		self.m_game.add_playground(playground)
 
-	def restore_player(self, player_data, game):
+	def restore_player(self, player_data):
 		pos_data = player_data["position"]
 		player = Character(pygame.Vector2(pos_data["x"], pos_data["y"]), pygame.Vector2(50,50), 500)
 
@@ -82,15 +86,15 @@ class LoadGameSystem(GameDataSystem):
 
 		look_data = player_data["look_direction"]
 		player.m_look_direction = pygame.Vector2(look_data["x"], look_data["y"])
-		game.add_char_object(player)
+		self.m_game.add_char_object(player)
 
-		self.restore_camera(player, game)
+		self.restore_camera(player)
 
 		self.restore_inventory(player_data["inventory"], player.m_inventory)
 
-	def restore_camera(self, player, game):
-		self.m_camera = Camera(pygame.Vector2(game.m_playground.m_game_world_rect.width // 2, game.m_playground.m_game_world_rect.height // 2), self.screen.m_window.get_width(), self.screen.m_window.get_height())
-		game.add_camera(self.m_camera)
+	def restore_camera(self, player):
+		self.m_camera = Camera(pygame.Vector2(self.m_game.m_playground.m_game_world_rect.width // 2, self.m_game.m_playground.m_game_world_rect.height // 2), self.screen.m_window.get_width(), self.screen.m_window.get_height())
+		self.m_game.add_camera(self.m_camera)
 
 	def restore_inventory(self, inventory_data, inventory):
 		weapons_data = inventory_data["weapons"]
@@ -106,7 +110,7 @@ class LoadGameSystem(GameDataSystem):
 			inventory.m_main_equipped.m_current_cooldown_s = main_data["cooldown_remaining"]
 			inventory.m_main_equipped.m_last_attack_time_ms = main_data["last_attack_time"]
 
-	def restore_npcs(self, npcs_data, game):
+	def restore_npcs(self, npcs_data):
 		for npc_data in npcs_data:
 			pos = Vector2(npc_data["position"]["x"], npc_data["position"]["y"])
 			size = Vector2(npc_data["size"]["x"], npc_data["size"]["y"])
@@ -118,9 +122,9 @@ class LoadGameSystem(GameDataSystem):
 			look_data = npc_data["look_direction"]
 			npc.m_look_direction = Vector2(look_data["x"], look_data["y"])
 
-			game.add_npc_object(npc)
+			self.m_game.add_npc_object(npc)
 
-	def restore_projectiles(self, projectiles_data, game):
+	def restore_projectiles(self, projectiles_data):
 		for proj_data in projectiles_data:
 			pos = Vector2(proj_data["position"]["x"], proj_data["position"]["y"])
 			size = Vector2(proj_data["size"]["x"], proj_data["size"]["y"])
@@ -144,4 +148,4 @@ class LoadGameSystem(GameDataSystem):
 
 			if projectile:
 				projectile.m_damage = proj_data["damage"]
-				game.add_projectile_object(projectile)
+				self.m_game.add_projectile_object(projectile)

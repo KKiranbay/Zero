@@ -9,7 +9,6 @@ from game.playground import Playground
 from game.game_objects.characters.character import Character
 from game.game_objects.npcs.npc import NPC, NPC_Type
 
-from systems.load_game_system import LoadGameSystem
 from systems.save_game_system import SaveGameSystem
 
 from ui.game_ui import Game_UI
@@ -27,26 +26,22 @@ class GameState(State):
 		super().__init__()
 		self.next_state = StatesEnum.MAIN_MENU
 
+		self.m_game: Game = Game()
+
 		self.m_is_paused = False
 		self.m_pause_menu_ui = None
 		self.m_save_game_system = SaveGameSystem()
-		self.m_load_game_system = LoadGameSystem()
 
 	def startup(self, persistent):
 		self.persist = persistent
 		self.m_is_paused = False
 
-		# init
-		self.m_game: Game = Game()
-
 		if self.previous_state == StatesEnum.MAIN_MENU:
 			self.initialize_game_objects()
 		elif self.previous_state == StatesEnum.LOAD_GAME_STATE:
-			game_data = self.m_load_game_system.load_game_data()
-			if game_data is not None:
-				self.m_load_game_system.restore_game_state(game_data, self.m_game)
-
-		pygame.time.set_timer(events_dictionary.SPAWN_NPC_EVENT, 2500)
+			self.game_loaded_successfully = self.persist.get('game_loaded', None)
+			if not self.game_loaded_successfully:
+				self.initialize_game_objects()
 
 		self.m_game_ui : Game_UI = Game_UI()
 
@@ -66,6 +61,8 @@ class GameState(State):
 
 		target = NPC(NPC_Type.ENEMY, pygame.Vector2(100, 100), pygame.Vector2(20,20))
 		self.m_game.add_npc_object(target)
+
+		self.m_game.start_spawn_system()
 
 	def check_events(self):
 		if self.events.get_event(pygame.KEYDOWN) is None:
@@ -96,6 +93,9 @@ class GameState(State):
 	def update(self):
 		if self.m_is_paused:
 			self.handle_pause_menu()
+			return
+
+		if self.m_game is None:
 			return
 
 		if self.m_game.m_game_events.get_event(events_dictionary.RESTART_GAME_EVENT):
@@ -130,6 +130,10 @@ class GameState(State):
 
 	def draw(self):
 		self.screen.reset_window_fill()
+
+		if self.m_game is None:
+			return
+
 		self.m_game.draw()
 		self.m_game_ui.update(self.m_game.m_chars.sprites()[0], self.m_game.m_score)
 

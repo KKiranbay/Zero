@@ -10,9 +10,11 @@ from game.game_objects.npcs.npc import NPC, NPC_Type
 
 last_spawn: int = 0
 
-def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int, max_time: int) -> NPC | None:
+def spawn_npc(playground: Playground, sprites: pygame.sprite.Group, min_time: int, max_time: int) -> tuple[NPC | None, int]:
 	max_attempts = 100  # Prevent infinite loops in case no suitable spot is found
 	attempts = 0
+
+	spawn_time = round(random.uniform(min_time, max_time))
 
 	while attempts < max_attempts:
 		size_int = random.randint(20, 40)
@@ -53,12 +55,8 @@ def spawnNPC(playground: Playground, sprites: pygame.sprite.Group, min_time: int
 				break
 
 		if not collision_found:
-			pygame.time.set_timer(events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
-			return NPC(NPC_Type.ENEMY, random_pos, enemy_size)
+			return (NPC(NPC_Type.ENEMY, random_pos, enemy_size), spawn_time)
 
 		attempts += 1
 
-	pygame.time.set_timer(events_dictionary.SPAWN_NPC_EVENT, round(random.uniform(min_time, max_time)))
-	return None
-
-
+	return (None, spawn_time)
