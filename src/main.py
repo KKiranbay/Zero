@@ -7,9 +7,10 @@ from screen import Screen
 
 from states_enum import StatesEnum
 from states.state import State
-from states.game_state import GameState
-from states.main_menu_state import MainMenuState
 from states.game_over_state import GameOverState
+from states.game_state import GameState
+from states.load_game_state import LoadGameState
+from states.main_menu_state import MainMenuState
 
 from time_handler import Time_Handler
 
@@ -28,6 +29,7 @@ class GameController:
 		self.quit: bool = False
 		self.states: dict[StatesEnum, State] = {
 			StatesEnum.MAIN_MENU:	MainMenuState(),
+			StatesEnum.LOAD_GAME_STATE:	LoadGameState(),
 			StatesEnum.GAME_STATE:	GameState(),
 			StatesEnum.GAME_OVER:	GameOverState()
 		}
@@ -49,6 +51,7 @@ class GameController:
 		self.state.check_events()
 
 		if self.game_events.get_event(events_dictionary.EXIT_GAME_EVENT):
+			self.game_events.clear_persistent_event(events_dictionary.EXIT_GAME_EVENT)
 			self.quit = True
 
 	def update(self):
@@ -66,9 +69,10 @@ class GameController:
 		self.current_state = self.state.next_state
 		persistent_data = self.state.persist
 		self.state.done = False
+
 		self.state = self.states[self.current_state]
-		self.state.startup(persistent_data)
 		self.state.previous_state = previous_state
+		self.state.startup(persistent_data)
 
 	def run(self):
 		while not self.quit:

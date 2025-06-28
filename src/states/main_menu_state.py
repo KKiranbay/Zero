@@ -6,7 +6,7 @@ from states_enum import StatesEnum
 
 from states.state import State
 
-from ui.main_menu_ui import Main_Menu_UI
+from ui.menu_uis.main_menu_ui import Main_Menu_UI
 
 class MainMenuState(State):
 	def __init__(self):
@@ -23,8 +23,10 @@ class MainMenuState(State):
 		if self.m_main_menu_ui.is_start_button_clicked():
 			self.done = True
 			self.next_state = StatesEnum.GAME_STATE
-
-		if self.m_main_menu_ui.is_exit_button_clicked():
+		elif self.m_main_menu_ui.is_load_button_clicked():
+			self.done = True
+			self.next_state = StatesEnum.LOAD_GAME_STATE
+		elif self.m_main_menu_ui.is_exit_button_clicked():
 			self.events.change_event(events_dictionary.EXIT_GAME_EVENT, True)
 
 	def update(self):
