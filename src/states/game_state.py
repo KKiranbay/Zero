@@ -34,6 +34,7 @@ class GameState(State):
 
 	def startup(self, persistent):
 		self.persist = persistent
+		self.m_is_paused = False
 
 		# init
 		self.m_game: Game = Game()
@@ -118,6 +119,12 @@ class GameState(State):
 			self.resume_game()
 		elif request == PauseMenuRequestEnum.SAVE:
 			self.save_game()
+		elif request == PauseMenuRequestEnum.MAIN_MENU:
+			self.persist = {
+				'game_data': self.m_game,
+			}
+			self.next_state = StatesEnum.MAIN_MENU
+			self.done = True
 		elif request == PauseMenuRequestEnum.EXIT_CONFIRMED:
 			self.events.change_event(events_dictionary.EXIT_GAME_EVENT, True)
 
