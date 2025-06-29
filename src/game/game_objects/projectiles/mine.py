@@ -4,9 +4,11 @@ import resources.colors as colors
 
 from game.game_objects.playground_object import Playground_Object
 
+from game.game import Game
+
 class Mine(Playground_Object):
-	def __init__(self, projectile_pos:  pygame.Vector2, projectile_size: pygame.Vector2) -> None:
-		super().__init__(projectile_pos, projectile_size)
+	def __init__(self, game: Game, projectile_pos:  pygame.Vector2, projectile_size: pygame.Vector2) -> None:
+		super().__init__(game, projectile_pos, projectile_size)
 		self.m_damage = 50
 
 		self.image.fill(colors.SOFT_GREEN)

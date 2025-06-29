@@ -19,12 +19,13 @@ import resources.colors as colors
 from screen import Screen
 
 from systems.game_data_system import GameDataSystem
+from controllers.spawn_controller import SpawnController
 
 class LoadGameSystem(GameDataSystem):
 	def __init__(self):
 		super().__init__()
 		self.screen: Screen = Screen()
-		self.m_game: Game = Game()
+		self.m_spawn_controller: SpawnController | None = None
 
 	def load_game_data(self):
 		try:
@@ -41,62 +42,58 @@ class LoadGameSystem(GameDataSystem):
 			return save_data
 
 		except Exception as e:
-			print(f"Failed to load self.m_game: {e}")
+			print(f"Failed to load game: {e}")
 			return None
 
-	def restore_game_state(self, save_data) -> bool:
+	def restore_game_state(self, save_data, game: Game) -> bool:
 		try:
-			self.m_game.reinitialize()
-
 			game_data = save_data["game"]
-			self.m_game.m_score = game_data["score"]
-			self.m_game.m_time_handler.m_total_duration_ms = game_data["total_duration_ms"]
-			self.m_game.m_next_spawn_total_time_ms = game_data["next_spawn_total_time_ms"]
-			self.m_game.m_spawn_system_active = game_data["spawn_system_active"]
+			game.m_score = game_data["score"]
+			game.m_time_handler.m_total_duration_ms = game_data["total_duration_ms"]
 
-			self.restore_playground()
+			self.restore_playground(game)
 
-			self.restore_player(save_data["player"])
+			self.restore_player(save_data["player"], game)
 
-			self.m_game.m_npcs.empty()
-			self.m_game.m_projectiles.empty()
+			game.m_npcs.empty()
+			game.m_projectiles.empty()
 
-			self.restore_npcs(save_data["npcs"])
+			self.restore_npcs(save_data["npcs"], game)
 
-			self.restore_projectiles(save_data["projectiles"])
+			self.restore_projectiles(save_data["projectiles"], game)
 
 			print("Game state restored successfully")
 			return True
 
 		except Exception as e:
-			print(f"Failed to restore self.m_game state: {e}")
+			print(f"Failed to restore game state: {e}")
 			return False
 
-	def restore_playground(self):
+	def restore_playground(self, game: Game):
 		playground_width = 500
 		playground_height = 500
 		playground = Playground(self.screen.m_window, playground_width, playground_height, colors.BEIGE)
-		self.m_game.add_playground(playground)
+		game.add_playground(playground)
 
-	def restore_player(self, player_data):
+	def restore_player(self, player_data, game: Game):
 		pos_data = player_data["position"]
-		player = Character(pygame.Vector2(pos_data["x"], pos_data["y"]), pygame.Vector2(50,50), 500)
+		player = Character(game, pygame.Vector2(pos_data["x"], pos_data["y"]), pygame.Vector2(50,50), 500)
 
 		player.m_health = player_data["health"]
 
 		look_data = player_data["look_direction"]
 		player.m_look_direction = pygame.Vector2(look_data["x"], look_data["y"])
-		self.m_game.add_char_object(player)
+		game.add_char_object(player)
 
-		self.restore_camera(player)
+		self.restore_camera(player, game)
 
-		self.restore_inventory(player_data["inventory"], player.m_inventory)
+		self.restore_inventory(player_data["inventory"], player.m_inventory, game)
 
-	def restore_camera(self, player):
-		self.m_camera = Camera(pygame.Vector2(self.m_game.m_playground.m_game_world_rect.width // 2, self.m_game.m_playground.m_game_world_rect.height // 2), self.screen.m_window.get_width(), self.screen.m_window.get_height())
-		self.m_game.add_camera(self.m_camera)
+	def restore_camera(self, player, game: Game):
+		self.m_camera = Camera(pygame.Vector2(game.m_playground.m_game_world_rect.width // 2, game.m_playground.m_game_world_rect.height // 2), self.screen.m_window.get_width(), self.screen.m_window.get_height())
+		game.add_camera(self.m_camera)
 
-	def restore_inventory(self, inventory_data, inventory):
+	def restore_inventory(self, inventory_data, inventory, game: Game):
 		weapons_data = inventory_data["weapons"]
 		for key_str, weapon_data in weapons_data.items():
 			key = int(key_str)
@@ -110,21 +107,21 @@ class LoadGameSystem(GameDataSystem):
 			inventory.m_main_equipped.m_current_cooldown_s = main_data["cooldown_remaining"]
 			inventory.m_main_equipped.m_last_attack_time_ms = main_data["last_attack_time"]
 
-	def restore_npcs(self, npcs_data):
+	def restore_npcs(self, npcs_data, game: Game):
 		for npc_data in npcs_data:
 			pos = Vector2(npc_data["position"]["x"], npc_data["position"]["y"])
 			size = Vector2(npc_data["size"]["x"], npc_data["size"]["y"])
 			npc_type = NPC_Type(npc_data["npc_type"])
 
-			npc = NPC(npc_type, pos, size)
+			npc = NPC(game, npc_type, pos, size)
 			npc.m_health = npc_data["health"]
 
 			look_data = npc_data["look_direction"]
 			npc.m_look_direction = Vector2(look_data["x"], look_data["y"])
 
-			self.m_game.add_npc_object(npc)
+			game.add_npc_object(npc)
 
-	def restore_projectiles(self, projectiles_data):
+	def restore_projectiles(self, projectiles_data, game: Game):
 		for proj_data in projectiles_data:
 			pos = Vector2(proj_data["position"]["x"], proj_data["position"]["y"])
 			size = Vector2(proj_data["size"]["x"], proj_data["size"]["y"])
@@ -133,19 +130,28 @@ class LoadGameSystem(GameDataSystem):
 
 			if proj_data["type"] == "Bullet":
 				direction = Vector2(proj_data["direction"]["x"], proj_data["direction"]["y"])
-				projectile = Bullet(direction, pos, size)
+				projectile = Bullet(game, direction, pos, size)
 				if "speed" in proj_data:
 					projectile.m_speed = proj_data["speed"]
 
 			elif proj_data["type"] == "Mine":
-				projectile = Mine(pos, size)
+				projectile = Mine(game, pos, size)
 
 			elif proj_data["type"] == "GrowingBarbedChain":
 				direction = Vector2(proj_data["direction"]["x"], proj_data["direction"]["y"])
-				projectile = GrowingBarbedChain(direction, pos, size)
+				projectile = GrowingBarbedChain(game, direction, pos, size)
 				if "growth" in proj_data:
 					projectile.m_growth = proj_data["growth"]
 
 			if projectile:
 				projectile.m_damage = proj_data["damage"]
-				self.m_game.add_projectile_object(projectile)
+				game.add_projectile_object(projectile)
+
+	def restore_spawn_controller_state(self, save_data, spawn_controller: SpawnController) -> bool:
+		"""Restore spawn controller state from save data."""
+		spawn_data = save_data.get("spawn_controller")
+		if spawn_data:
+			spawn_controller.m_next_spawn_total_time_ms = spawn_data.get("next_spawn_total_time_ms", 0)
+			spawn_controller.m_spawn_system_active = spawn_data.get("spawn_system_active", False)
+			return True
+		return False

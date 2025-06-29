@@ -1,6 +1,10 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 import pygame
+
+if TYPE_CHECKING:
+	from game.game import Game
 
 from game.game_objects.playground_object import Playground_Object
 
@@ -9,8 +13,8 @@ class NPC_Type(Enum):
 	FRIENDLY = 2
 
 class NPC(Playground_Object):
-	def __init__(self, npc_type: NPC_Type, npc_pos: pygame.Vector2, npc_size: pygame.Vector2):
-		super().__init__(npc_pos, npc_size)
+	def __init__(self, game: 'Game', npc_type: NPC_Type, npc_pos: pygame.Vector2, npc_size: pygame.Vector2):
+		super().__init__(game, npc_pos, npc_size)
 
 		self.m_type: NPC_Type = npc_type
 		self.m_health: int = 100

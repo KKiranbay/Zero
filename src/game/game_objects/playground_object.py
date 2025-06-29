@@ -2,14 +2,15 @@ import pygame
 
 import resources.colors as colors
 
+from game.game import Game
+from time_handler import Time_Handler
+
 class Playground_Object(pygame.sprite.Sprite):
-	def __init__(self, pos: pygame.Vector2, size: pygame.Vector2) -> None:
+	def __init__(self, game: Game, pos: pygame.Vector2, size: pygame.Vector2) -> None:
 		super().__init__()
 
-		from game.game import Game
-		self.m_game: Game = Game()
+		self.m_game: Game = game
 
-		from time_handler import Time_Handler
 		self.m_time_handler: Time_Handler = Time_Handler()
 
 		self.image: pygame.Surface = pygame.Surface((size.x, size.y), pygame.SRCALPHA)

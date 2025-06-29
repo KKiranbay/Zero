@@ -1,0 +1,9 @@
+{
+  "usageStatisticsEnabled": true,
+  "checkpointing": {
+	"enabled": true
+  },
+  "contextFileName": [
+	"GEMINI.md"
+  ]
+}

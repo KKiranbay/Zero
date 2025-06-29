@@ -17,9 +17,11 @@ from game.game_objects.equippables.weapons.rifle import Rifle
 from game.game_objects.equippables.weapons.mine_deployer import MineDeployer
 from game.game_objects.equippables.weapons.chain_deployer import ChainDeployer
 
+from game.game import Game
+
 class Character(Playground_Object):
-	def __init__(self, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
-		super().__init__(char_pos, char_size)
+	def __init__(self, game: Game, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
+		super().__init__(game, char_pos, char_size)
 
 		self.m_player_id: int = 1
 
@@ -57,11 +59,11 @@ class Character(Playground_Object):
 		self.m_left_click: bool = False
 
 		# Weapon Inventory
-		rifle: Weapon = Rifle(self.m_pos, Vector2(5, 10),
+		rifle: Weapon = Rifle(self.m_game, self.m_pos, Vector2(5, 10),
 							  300, self.m_look_direction, colors.PINK_RED, self, True)
-		mine_deployer: Weapon = MineDeployer(self.m_pos, Vector2(5, 10),
+		mine_deployer: Weapon = MineDeployer(self.m_game, self.m_pos, Vector2(5, 10),
 							  30, self.m_look_direction, colors.SOFT_GREEN)
-		chain_deployer: Weapon = ChainDeployer(self.m_pos, Vector2(5,10),
+		chain_deployer: Weapon = ChainDeployer(self.m_game, self.m_pos, Vector2(5,10),
 							  10, self.m_look_direction, colors.DARK_GREY)
 
 		self.m_inventory: Inventory = Inventory()
@@ -141,15 +143,15 @@ class Character(Playground_Object):
 		self.m_inventory.main_triggered()
 
 	def shoot_bullet(self):
-		bullet: Bullet = Bullet(self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
+		bullet: Bullet = Bullet(self.m_game, self.m_look_direction, self.m_pos, pygame.Vector2(10, 10))
 		self.m_game.add_projectile_object(bullet)
 
 	def deploy_mine(self):
-		mine: Mine = Mine(self.m_pos, pygame.Vector2(25, 25))
+		mine: Mine = Mine(self.m_game, self.m_pos, pygame.Vector2(25, 25))
 		self.m_game.add_projectile_object(mine)
 
 	def deploy_barbed_chain(self):
-		barbed_chain: GrowingBarbedChain = GrowingBarbedChain(self.m_look_direction, self.m_pos, pygame.Vector2(30, 10))
+		barbed_chain: GrowingBarbedChain = GrowingBarbedChain(self.m_game, self.m_look_direction, self.m_pos, pygame.Vector2(30, 10))
 		self.m_game.add_projectile_object(barbed_chain)
 
 	def on_collision_with_npcs(self, npcs_hit: set[pygame.sprite.Sprite]):

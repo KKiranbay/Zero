@@ -4,9 +4,11 @@ import resources.colors as colors
 
 from game.game_objects.playground_object import Playground_Object
 
+from game.game import Game
+
 class GrowingBarbedChain(Playground_Object):
-	def __init__(self, direction: pygame.Vector2, spawn_pos: pygame.Vector2,  projectile_size: pygame.Vector2) -> None:
-		super().__init__(spawn_pos, projectile_size)
+	def __init__(self, game: Game, direction: pygame.Vector2, spawn_pos: pygame.Vector2,  projectile_size: pygame.Vector2) -> None:
+		super().__init__(game, spawn_pos, projectile_size)
 
 		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(direction)
 		self.m_damage: int = 100

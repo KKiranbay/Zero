@@ -1,5 +1,3 @@
-import pygame
-
 import events_dictionary as events_dictionary
 
 from states_enum import StatesEnum

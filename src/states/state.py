@@ -12,6 +12,7 @@ class State:
 
 		self.events: EventsDictionary = EventsDictionary()
 		self.screen: Screen = Screen()
+		self.persist = {}
 
 	def startup(self, persistent):
 		self.persist = persistent

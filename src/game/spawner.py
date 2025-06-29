@@ -1,16 +1,14 @@
 import random
+from typing import Callable
 
 import pygame
-
-import events_dictionary as events_dictionary
 
 from game.playground import Playground
 from game.game_objects.npcs.npc import NPC, NPC_Type
 
-
 last_spawn: int = 0
 
-def spawn_npc(playground: Playground, sprites: pygame.sprite.Group, min_time: int, max_time: int) -> tuple[NPC | None, int]:
+def spawn_npc(npc_factory: Callable[[NPC_Type, pygame.Vector2, pygame.Vector2], NPC], playground: Playground, sprites: pygame.sprite.Group, min_time: int, max_time: int) -> tuple[NPC | None, int]:
 	max_attempts = 100  # Prevent infinite loops in case no suitable spot is found
 	attempts = 0
 
@@ -55,7 +53,7 @@ def spawn_npc(playground: Playground, sprites: pygame.sprite.Group, min_time: in
 				break
 
 		if not collision_found:
-			return (NPC(NPC_Type.ENEMY, random_pos, enemy_size), spawn_time)
+			return (npc_factory(NPC_Type.ENEMY, random_pos, enemy_size), spawn_time)
 
 		attempts += 1
 

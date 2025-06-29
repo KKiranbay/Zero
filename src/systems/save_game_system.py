@@ -8,7 +8,7 @@ class SaveGameSystem(GameDataSystem):
 	def __init__(self):
 		super().__init__()
 
-	def save_game_state(self, game):
+	def save_game_state(self, game, spawn_controller=None):
 		try:
 			save_data = {
 				"metadata": {
@@ -18,7 +18,8 @@ class SaveGameSystem(GameDataSystem):
 				"game": self.serialize_game(game),
 				"player": self.serialize_player(game.m_chars.sprites()[0]),
 				"npcs": self.serialize_npcs(game.m_npcs),
-				"projectiles": self.serialize_projectiles(game.m_projectiles)
+				"projectiles": self.serialize_projectiles(game.m_projectiles),
+				"spawn_controller": self.serialize_spawn_controller(spawn_controller)
 			}
 
 			save_path = os.path.join(self.m_save_directory, self.m_save_filename)
@@ -35,9 +36,7 @@ class SaveGameSystem(GameDataSystem):
 	def serialize_game(self, game):
 		return {
 			"score": game.m_score,
-			"total_duration_ms": game.m_time_handler.get_total_duration_ms(),
-			"next_spawn_total_time_ms": game.m_next_spawn_total_time_ms,
-			"spawn_system_active": game.m_spawn_system_active
+			"total_duration_ms": game.m_time_handler.get_total_duration_ms()
 		}
 
 	def serialize_player(self, player):
@@ -102,3 +101,13 @@ class SaveGameSystem(GameDataSystem):
 			projectiles_data.append(projectile_data)
 
 		return projectiles_data
+
+	def serialize_spawn_controller(self, spawn_controller):
+		"""Serialize spawn controller data for saving."""
+		if spawn_controller is None:
+			return None
+
+		return {
+			"next_spawn_total_time_ms": spawn_controller.m_next_spawn_total_time_ms,
+			"spawn_system_active": spawn_controller.m_spawn_system_active
+		}

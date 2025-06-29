@@ -15,7 +15,7 @@ from states.main_menu_state import MainMenuState
 from time_handler import Time_Handler
 
 
-class GameController:
+class Main:
 	def __init__(self):
 		pygame.init()
 		self.m_screen: Screen = Screen(800, 600)
@@ -28,15 +28,14 @@ class GameController:
 		self.set_desired_hz(10000)
 		self.quit: bool = False
 		self.states: dict[StatesEnum, State] = {
-			StatesEnum.MAIN_MENU:	MainMenuState(),
+			StatesEnum.MAIN_MENU:		MainMenuState(),
 			StatesEnum.LOAD_GAME_STATE:	LoadGameState(),
-			StatesEnum.GAME_STATE:	GameState(),
-			StatesEnum.GAME_OVER:	GameOverState()
+			StatesEnum.GAME_STATE:		GameState(),
+			StatesEnum.GAME_OVER:		GameOverState()
 		}
 
 		self.current_state: StatesEnum = StatesEnum.MAIN_MENU
 		self.state: State = self.states[self.current_state]
-		self.state.startup({})
 
 		self.game_events: EventsDictionary = EventsDictionary()
 
@@ -90,6 +89,6 @@ class GameController:
 			self.desired_framerate = 0
 
 if __name__ == "__main__":
-	app = GameController()
+	app = Main()
 	app.run()
 	pygame.quit()

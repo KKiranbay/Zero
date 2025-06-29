@@ -5,15 +5,17 @@ from game.game_objects.equippables.equippable import Equippable
 from game.game_objects.playground_object import Playground_Object
 
 
+from game.game import Game
+
 class Weapon(Equippable):
-	def __init__(self, name: str,
+	def __init__(self, game: Game, name: str,
 			  pos: Vector2, size: Vector2,
 			  attack_rpm: float,
 			  direction: Vector2,
 			  color: tuple[int, int, int],
 			  parent: Playground_Object | None = None,
 			  attach_to_parent: bool = False) -> None:
-		super().__init__(name, pos, size, direction, parent)
+		super().__init__(game, name, pos, size, direction, parent)
 
 		self.image = self.image.copy()
 		self.image.fill(color)
