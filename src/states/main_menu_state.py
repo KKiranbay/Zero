@@ -15,6 +15,9 @@ class MainMenuState(State):
 	def startup(self, persistent):
 		self.persist = persistent
 
+		# Refresh UI to reflect current save file state
+		self.m_main_menu_ui.refresh_ui()
+
 	def check_events(self):
 		self.m_main_menu_ui.check_ui_events()
 
