@@ -19,7 +19,7 @@ Zero Game
 
 The project follows a structured directory layout to organize game components, resources, and development configurations.
 
-- **`.gemini/`**: Contains configuration and context files for the Gemini CLI agent.
+- **`.gemini/`**: Contains configuration and context files for the AI agent.
 - **`.git/`**: Git version control repository.
 - **`.github/`**: GitHub-related configurations, including Copilot prompts.
 - **`.ruff_cache/`**: Cache directory for Ruff linter.
@@ -48,4 +48,4 @@ The game appears to be structured around common game development patterns:
 - **Systems:** Handling persistent data and cross-cutting concerns.
 - **UI:** Dedicated components for user interaction.
 
-This context should help Gemini understand the project's architecture and assist effectively with development tasks.
+This context should help AI agents understand the project's architecture and assist effectively with development tasks.

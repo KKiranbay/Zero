@@ -11,10 +11,23 @@ from time_handler import Time_Handler
 from resources.shape_png_factory import create_triangle_png
 import resources.colors as colors
 
+from game.map.map import Map
+from game.map.map_renderer import MapRenderer
+from game.map.polygon_data import PolygonData
+
 class Game:
 	def __init__(self):
 		self.m_time_handler: Time_Handler = Time_Handler()
 		self.m_game_events: EventsDictionary = EventsDictionary()
+
+		main_polygon_data = PolygonData(
+			vertices=[(100, 100), (400, 100), (400, 500), (100, 500)],
+			fill_color=colors.DARK_BLUE,
+			outline_color=colors.WHITE,
+			outline_width=2
+		)
+		self.m_game_map = Map(main_polygon_data)
+		self.m_map_renderer = MapRenderer()
 
 		self.m_playground: Playground
 
@@ -64,6 +77,8 @@ class Game:
 
 	def draw(self):
 		self.m_playground.refill_playground()
+
+		self.m_map_renderer.render_map(self.m_playground.m_surface, self.m_game_map)
 
 		self.m_npcs.draw(self.m_playground.m_surface)
 		self.m_projectiles.draw(self.m_playground.m_surface)

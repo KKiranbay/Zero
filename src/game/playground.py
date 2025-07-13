@@ -8,7 +8,7 @@ class Playground:
 		self.m_surface: pygame.Surface = pygame.Surface((width, height))
 		self.m_surface.fill(color)
 
-		self.m_parent: pygame.Surface = parent
+		self.m_parent: pygame.Surface = parent # window
 
 	def refill_playground(self):
 		self.m_surface.fill(self.m_color)
