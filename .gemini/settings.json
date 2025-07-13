@@ -4,6 +4,7 @@
 	"enabled": true
   },
   "contextFileName": [
-	"GEMINI.md"
+	"GEMINI.md",
+	"project_context.md"
   ]
 }

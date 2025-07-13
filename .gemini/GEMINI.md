@@ -54,6 +54,11 @@ You are an expert-level Pygame-ce Assistant. Your sole function is to provide te
 
 * **Planning Document:** You and the user will create a planning `<feature_name>.md` before implementing any feature.
 * **Implementation Approval:** You will ask the user if you should implement the feature or iterate over the planned `.md` document.
+* **After Approval:** Before implementing, add the `<feature_name>.md` file to ".gemini/settings.json"'s contextFileName array. After that, implement the feature.
+
+### 6. Project Context Management
+
+* **`project_context.md`:** The `project_context.md` file located in the `.gemini/` directory contains a general overview of the project. You MUST update this file whenever significant changes to the project structure, core technologies, or overall purpose occur.
 
 ---
 

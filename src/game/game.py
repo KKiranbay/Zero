@@ -23,11 +23,14 @@ class Game:
 		create_triangle_png("enemy_triangle.png", (100, 100), color=colors.YELLOW_ORANGE)
 
 	def initialize(self):
+		self._initialize_game_objects()
+
+		self.m_score: int = 0
+
+	def _initialize_game_objects(self):
 		self.m_chars: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_projectiles: pygame.sprite.Group = pygame.sprite.Group()
 		self.m_npcs: pygame.sprite.Group = pygame.sprite.Group()
-
-		self.m_score: int = 0
 
 	def reset_game_duration(self):
 		self.m_time_handler.reset_total_duration()
