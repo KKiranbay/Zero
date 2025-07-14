@@ -13,20 +13,12 @@ import resources.colors as colors
 
 from game.map.map import Map
 from game.map.map_renderer import MapRenderer
-from game.map.polygon_data import PolygonData
 
 class Game:
 	def __init__(self):
 		self.m_time_handler: Time_Handler = Time_Handler()
 		self.m_game_events: EventsDictionary = EventsDictionary()
 
-		main_polygon_data = PolygonData(
-			vertices=[(100, 100), (400, 100), (400, 500), (100, 500)],
-			fill_color=colors.DARK_BLUE,
-			outline_color=colors.WHITE,
-			outline_width=2
-		)
-		self.m_game_map = Map(main_polygon_data)
 		self.m_map_renderer = MapRenderer()
 
 		self.m_playground: Playground
@@ -59,6 +51,9 @@ class Game:
 		chars_sprites = self.m_chars.sprites()
 		if chars_sprites:
 			self.m_camera.update(chars_sprites[0].rect.center)
+
+	def add_map(self, game_map: Map):
+		self.m_game_map = game_map
 
 	def add_playground(self, playground: Playground):
 		self.m_playground = playground

@@ -9,6 +9,9 @@ from game.camera import Camera
 from game.game import Game
 from game.playground import Playground
 
+from game.map.polygon_data import PolygonData
+from game.map.map import Map
+
 from game.game_objects.characters.character import Character
 from game.game_objects.npcs.npc import NPC, NPC_Type
 
@@ -38,12 +41,21 @@ class GameController:
 		"""Initialize all game objects including playground, player, camera, and initial NPCs."""
 		self.m_game.reset_game_duration()
 
-		playground_width = 500
-		playground_height = 500
+		playground_width = 3500
+		playground_height = 3500
 		playground = Playground(self.m_screen.m_window, playground_width, playground_height, colors.BEIGE)
 		self.m_game.add_playground(playground)
 
-		player = Character(self.m_game, pygame.Vector2(playground.m_game_world_rect.width // 2, playground.m_game_world_rect.height // 2), pygame.Vector2(50,50), 500)
+		main_polygon_data = PolygonData(
+			vertices=[(200, 200), (600, 200), (600, 600), (200, 600)],
+			fill_color=colors.LIGHT_BLUE,
+			outline_color=colors.WHITE,
+			outline_width=2
+		)
+		self.m_game_map = Map(main_polygon_data)
+		self.m_game.add_map(self.m_game_map)
+
+		player = Character(self.m_game, pygame.Vector2(self.m_game_map.get_main_polygon().get_middle_point()), pygame.Vector2(50,50), 500)
 		self.m_game.add_char_object(player)
 
 		camera = Camera(pygame.Vector2(player.rect.center), self.m_screen.m_window.get_width(), self.m_screen.m_window.get_height())
