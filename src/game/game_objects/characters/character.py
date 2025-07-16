@@ -4,7 +4,7 @@ from pygame import Vector2
 import events_dictionary as events_dictionary
 import resources.colors as colors
 
-from game.game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import PlaygroundObject
 
 from game.game_objects.inventory.inventory import Inventory
 
@@ -19,7 +19,7 @@ from game.game_objects.equippables.weapons.chain_deployer import ChainDeployer
 
 from game.game import Game
 
-class Character(Playground_Object):
+class Character(PlaygroundObject):
 	def __init__(self, game: Game, char_pos: pygame.Vector2, char_size: pygame.Vector2, char_speed: float):
 		super().__init__(game, char_pos, char_size)
 

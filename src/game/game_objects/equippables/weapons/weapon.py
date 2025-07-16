@@ -2,7 +2,7 @@ import pygame
 from pygame import Vector2
 
 from game.game_objects.equippables.equippable import Equippable
-from game.game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import PlaygroundObject
 
 
 from game.game import Game
@@ -13,7 +13,7 @@ class Weapon(Equippable):
 			  attack_rpm: float,
 			  direction: Vector2,
 			  color: tuple[int, int, int],
-			  parent: Playground_Object | None = None,
+			  parent: PlaygroundObject | None = None,
 			  attach_to_parent: bool = False) -> None:
 		super().__init__(game, name, pos, size, direction, parent)
 

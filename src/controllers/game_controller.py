@@ -72,7 +72,7 @@ class GameController:
 		self.m_game_map = Map(main_polygon_data)
 		self.m_game_map.add_interior_polygon(obstacle_polygon_data)
 
-		#self.m_game.add_map(self.m_game_map)
+		self.m_game.add_map(self.m_game_map)
 
 		player = Character(self.m_game, pygame.Vector2(self.m_game_map.get_main_polygon().get_middle_point()), pygame.Vector2(50,50), 500)
 		self.m_game.add_char_object(player)

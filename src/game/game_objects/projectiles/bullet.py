@@ -2,11 +2,11 @@ import pygame
 
 import resources.colors as colors
 
-from game.game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import PlaygroundObject
 
 from game.game import Game
 
-class Bullet(Playground_Object):
+class Bullet(PlaygroundObject):
 	def __init__(self, game: Game, direction: pygame.math.Vector2, projectile_pos:  pygame.Vector2, projectile_size: pygame.Vector2) -> None:
 		super().__init__(game, projectile_pos, projectile_size)
 		self.m_direction: pygame.math.Vector2 = pygame.math.Vector2(direction)

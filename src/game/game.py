@@ -56,6 +56,9 @@ class Game:
 	def add_map(self, game_map: Map):
 		self.m_game_map = game_map
 
+	def get_map(self) -> Map | None:
+		return self.m_game_map
+
 	def add_playground(self, playground: Playground):
 		self.m_playground = playground
 

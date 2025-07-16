@@ -110,3 +110,33 @@ class PolygonData:
 				return True
 		return False
 
+	def point_in_polygon(self, point: pygame.Vector2) -> bool:
+		"""Check if a point is inside a polygon using ray casting algorithm.
+
+		Args:
+			point: (x, y) coordinate tuple to test
+
+		Returns:
+			True if point is inside polygon, False otherwise
+		"""
+
+		if len(self.m_vertices) < 3:
+			return False
+
+		num_vertices: int = len(self.m_vertices)
+		inside: bool = False
+
+		first_Vector2 = self.m_vertices[0]
+		for i in range(1, num_vertices + 1):
+			second_Vector2 = self.m_vertices[i % num_vertices]
+
+			if point.y > min(first_Vector2.y, second_Vector2.y) and point.y <= max(first_Vector2.y, second_Vector2.y) and point.x <= max(first_Vector2.x, second_Vector2.x):
+				if first_Vector2.y != second_Vector2.y:
+					xinters = (point.y - first_Vector2.y) * (second_Vector2.x - first_Vector2.x) / (second_Vector2.y - first_Vector2.y) + first_Vector2.x
+
+				if first_Vector2.x == second_Vector2.x or point.x <= xinters:
+					inside = not inside
+
+			first_Vector2 = second_Vector2
+
+		return inside

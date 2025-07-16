@@ -6,13 +6,13 @@ import pygame
 if TYPE_CHECKING:
 	from game.game import Game
 
-from game.game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import PlaygroundObject
 
 class NPC_Type(Enum):
 	ENEMY = 1
 	FRIENDLY = 2
 
-class NPC(Playground_Object):
+class NPC(PlaygroundObject):
 	def __init__(self, game: 'Game', npc_type: NPC_Type, npc_pos: pygame.Vector2, npc_size: pygame.Vector2):
 		super().__init__(game, npc_pos, npc_size)
 
@@ -33,7 +33,7 @@ class NPC(Playground_Object):
 		self.move_towards_closest_target()
 
 	def move_towards_closest_target(self):
-		closest_target: Playground_Object | None = None
+		closest_target: PlaygroundObject | None = None
 		min_distance: float = float('inf')
 		chars = self.m_game.m_chars
 		my_pos = self.m_pos

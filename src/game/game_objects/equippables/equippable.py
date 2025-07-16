@@ -1,14 +1,14 @@
 import pygame
 
-from game.game_objects.playground_object import Playground_Object
+from game.game_objects.playground_object import PlaygroundObject
 
 from game.game import Game
 
-class Equippable(Playground_Object):
+class Equippable(PlaygroundObject):
 	def __init__(self, game: Game,
 			  name: str, pos: pygame.Vector2, size: pygame.Vector2,
 			  direction: pygame.Vector2,
-			  parent: Playground_Object | None = None,
+			  parent: PlaygroundObject | None = None,
 			  ) -> None:
 		super().__init__(game, pos, size)
 

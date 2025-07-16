@@ -4,6 +4,9 @@
 # - Main polygon contains all other polygons and defines the playable area
 # - Interior polygons are obstacles/walls within the main boundary
 
+import pygame
+
+from typing import Tuple
 from game.map.polygon_data import PolygonData
 
 class Map:
@@ -69,3 +72,38 @@ class Map:
 		"""Remove all interior polygons."""
 		self.m_interior_polygons.clear()
 
+	def point_in_main_polygon(self, point: pygame.Vector2) -> bool:
+		"""Check if a point is inside the main polygon boundary.
+
+		Args:
+			point: (x, y) coordinate tuple
+
+		Returns:
+			True if point is inside main polygon, False otherwise
+		"""
+		return self.m_main_polygon.point_in_polygon(point)
+
+	def point_in_interior_polygons(self, point: pygame.Vector2) -> bool:
+		"""Check if a point is inside any interior polygon.
+
+		Args:
+			point: (x, y) coordinate tuple
+
+		Returns:
+			True if point is inside any interior polygon, False otherwise
+		"""
+		for interior_polygon in self.m_interior_polygons:
+			if interior_polygon.point_in_polygon(point):
+				return True
+		return False
+
+	def point_in_playable_area(self, point: pygame.Vector2) -> bool:
+		"""Check if a point is in playable area (main polygon but not in interior polygons).
+
+		Args:
+			point: (x, y) coordinate tuple
+
+		Returns:
+			True if point is in playable area, False otherwise
+		"""
+		return (self.point_in_main_polygon(point) and not self.point_in_interior_polygons(point))
