@@ -23,13 +23,16 @@ class MapRenderer:
 		self.m_render_filled = render_filled
 		self.m_render_outlines = render_outlines
 
-	def render_map(self, surface: pygame.Surface, game_map: Map) -> None:
+	def render_map(self, surface: pygame.Surface, game_map: Map | None) -> None:
 		"""Render the entire map to the given surface.
 
 		Args:
 			surface: Pygame surface to render on
 			game_map: Map object to render
 		"""
+		if game_map is None:
+			return
+
 		# Render main polygon
 		self._render_polygon(surface, game_map.get_main_polygon())
 

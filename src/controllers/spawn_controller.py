@@ -44,8 +44,10 @@ class SpawnController:
 		def npc_factory_func(npc_type: NPC_Type, pos: pygame.Vector2, size: pygame.Vector2):
 			return create_npc(self.m_game, npc_type, pos, size)
 
-		# npc_time_tuple = spawner.spawn_npc_on_playground(npc_factory_func, self.m_game.m_playground, self.m_game.m_chars, 200, exp_time_ms)
-		npc_time_tuple = spawner.spawn_npc_on_polygon_vertices(npc_factory_func, self.m_game.m_game_map.get_main_polygon(), self.m_game.m_chars, 200, exp_time_ms)
+		if self.m_game.m_game_map is None:
+			npc_time_tuple = spawner.spawn_npc_on_playground(npc_factory_func, self.m_game.m_playground, self.m_game.m_chars, 200, exp_time_ms)
+		else:
+			npc_time_tuple = spawner.spawn_npc_on_polygon_vertices(npc_factory_func, self.m_game.m_game_map.get_main_polygon(), self.m_game.m_chars, 200, exp_time_ms)
 
 		if npc_time_tuple[0] is not None:
 			self.m_game.add_npc_object(npc_time_tuple[0])

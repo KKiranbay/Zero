@@ -4,7 +4,6 @@
 # - Main polygon contains all other polygons and defines the playable area
 # - Interior polygons are obstacles/walls within the main boundary
 
-from typing import List, Tuple
 from game.map.polygon_data import PolygonData
 
 class Map:

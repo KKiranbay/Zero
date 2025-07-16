@@ -19,6 +19,7 @@ class Game:
 		self.m_time_handler: Time_Handler = Time_Handler()
 		self.m_game_events: EventsDictionary = EventsDictionary()
 
+		self.m_game_map: Map | None = None
 		self.m_map_renderer = MapRenderer()
 
 		self.m_playground: Playground

@@ -47,13 +47,32 @@ class GameController:
 		self.m_game.add_playground(playground)
 
 		main_polygon_data = PolygonData(
-			vertices=[(200, 200), (600, 200), (600, 600), (200, 600)],
+			vertices=[
+				pygame.Vector2(200, 200),
+				pygame.Vector2(600, 200),
+				pygame.Vector2(600, 600),
+				pygame.Vector2(200, 600)
+				],
 			fill_color=colors.LIGHT_BLUE,
 			outline_color=colors.WHITE,
 			outline_width=2
 		)
+
+		obstacle_polygon_data = PolygonData(
+			vertices=[
+				pygame.Vector2(300, 250),
+				pygame.Vector2(350, 275),
+				pygame.Vector2(350, 225),
+				],
+			fill_color=colors.DARK_BLUE,
+			outline_color=colors.WHITE,
+			outline_width=2
+		)
+
 		self.m_game_map = Map(main_polygon_data)
-		self.m_game.add_map(self.m_game_map)
+		self.m_game_map.add_interior_polygon(obstacle_polygon_data)
+
+		#self.m_game.add_map(self.m_game_map)
 
 		player = Character(self.m_game, pygame.Vector2(self.m_game_map.get_main_polygon().get_middle_point()), pygame.Vector2(50,50), 500)
 		self.m_game.add_char_object(player)
